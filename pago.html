@@ -28,6 +28,9 @@
             background-color: var(--light-gray);
             color: var(--dark-text);
             line-height: 1.6;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
         }
 
         /* Header */
@@ -155,12 +158,19 @@
             position: relative;
             padding: 1px;
             flex-shrink: 0;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: manipulation;
         }
 
         .seat-img {
             width: 100%;
             height: 100%;
             object-fit: contain;
+            pointer-events: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .seat.available:hover .seat-img {
@@ -262,6 +272,9 @@
             transition: all 0.3s ease;
             margin-bottom: 1.5rem;
             font-family: "LATAM Sans", "Trebuchet MS", sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
         }
 
         .next-btn:hover {
@@ -297,6 +310,8 @@
             display: flex;
             align-items: center;
             gap: 0.3rem;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .price-label-icon {
@@ -461,7 +476,7 @@
         </div>
 
         <!-- Next Button -->
-        <button class="next-btn" id="nextBtn" onclick="nextStep()" disabled>
+        <button class="next-btn" id="nextBtn" disabled>
             Selecciona asientos para continuar
         </button>
 
@@ -565,6 +580,7 @@
                     const seat = document.createElement('div');
                     seat.className = `seat ${isOccupied ? 'occupied' : 'available'}`;
                     seat.id = `seat-${seatId}`;
+                    seat.dataset.seatId = seatId;
                     
                     const img = document.createElement('img');
                     img.src = 'seat.png';
@@ -573,7 +589,8 @@
                     seat.appendChild(img);
 
                     if (!isOccupied) {
-                        seat.onclick = () => toggleSeat(seatId, pasajeros);
+                        seat.addEventListener('click', handleSeatClick);
+                        seat.addEventListener('touchstart', handleSeatClick, { passive: false });
                     }
 
                     group1.appendChild(seat);
@@ -597,6 +614,7 @@
                     const seat = document.createElement('div');
                     seat.className = `seat ${isOccupied ? 'occupied' : 'available'}`;
                     seat.id = `seat-${seatId}`;
+                    seat.dataset.seatId = seatId;
                     
                     const img = document.createElement('img');
                     img.src = 'seat.png';
@@ -605,7 +623,8 @@
                     seat.appendChild(img);
 
                     if (!isOccupied) {
-                        seat.onclick = () => toggleSeat(seatId, pasajeros);
+                        seat.addEventListener('click', handleSeatClick);
+                        seat.addEventListener('touchstart', handleSeatClick, { passive: false });
                     }
 
                     group2.appendChild(seat);
@@ -615,6 +634,14 @@
 
                 grid.appendChild(rowDiv);
             }
+        }
+
+        // Manejador de click/touch en asientos
+        function handleSeatClick(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const seatId = this.dataset.seatId;
+            toggleSeat(seatId, window.paymentData.pasajeros);
         }
 
         // Toggle asiento seleccionado
@@ -716,6 +743,9 @@
             const label = document.querySelector('.price-label-icon');
             label.textContent = label.textContent === '▲' ? '▼' : '▲';
         }
+
+        // Agregar event listener al botón next
+        document.getElementById('nextBtn').addEventListener('click', nextStep);
 
         // Cargar datos al abrir
         window.addEventListener('load', loadPaymentData);
