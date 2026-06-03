@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de Vuelos - LATAM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #1a0a5c;
+            --secondary-blue: #2d1b8f;
+            --accent-orange: #ff6b00;
+            --light-gray: #f5f5f5;
+            --dark-text: #1a1a1a;
+            --border-gray: #e0e0e0;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: var(--white);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo-img {
+            height: 35px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .login-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .login-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Search Info Bar */
+        .search-info {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid var(--border-gray);
+        }
+
+        .search-info-left h3 {
+            color: var(--accent-orange);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .search-info-left p {
+            color: var(--dark-text);
+            font-size: 0.9rem;
+        }
+
+        .modify-btn {
+            background: transparent;
+            color: var(--accent-orange);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .modify-btn:hover {
+            background: rgba(255, 107, 0, 0.1);
+        }
+
+        /* Date selector */
+        .date-selector {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+        }
+
+        .date-btn {
+            background: var(--white);
+            border: 2px solid var(--border-gray);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            min-width: 100px;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .date-btn.active {
+            background: var(--secondary-blue);
+            color: var(--white);
+            border-color: var(--secondary-blue);
+        }
+
+        .date-btn:hover {
+            border-color: var(--secondary-blue);
+        }
+
+        .date-nav {
+            background: var(--white);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--dark-text);
+            flex-shrink: 0;
+        }
+
+        /* Filter section */
+        .filter-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .filter-section h2 {
+            font-size: 1.2rem;
+            color: var(--dark-text);
+        }
+
+        .sort-dropdown {
+            background: var(--white);
+            border: 1px solid var(--border-gray);
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        /* Flights Grid */
+        .flights-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .flight-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .flight-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .flight-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .flight-badge {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 8px 0 8px 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .flight-price-top {
+            text-align: right;
+        }
+
+        .price-label {
+            color: #666;
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .flight-body {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-gray);
+            gap: 1rem;
+        }
+
+        .flight-time {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 0 0 auto;
+        }
+
+        .flight-time-big {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--primary-blue);
+            line-height: 1;
+            margin-bottom: 0.3rem;
+            font-family: "LATAM Sans", "Trebuchet MS", sans-serif;
+        }
+
+        .flight-city-code {
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+        }
+
+        .flight-middle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            flex: 1;
+            position: relative;
+            padding: 0 1rem;
+            min-height: 3rem;
+        }
+
+        .flight-middle::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background: #999;
+            top: 1.2rem;
+            left: 0;
+            right: 0;
+            z-index: 0;
+        }
+
+        .flight-duration-text {
+            color: #999;
+            font-size: 0.75rem;
+            margin-bottom: 0.2rem;
+            position: relative;
+            z-index: 1;
+            background: var(--white);
+            padding: 0 0.5rem;
+        }
+
+        .flight-duration-time {
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 0;
+            position: relative;
+            z-index: 1;
+            background: var(--white);
+            padding: 0 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .flight-stops {
+            display: none;
+        }
+
+        .flight-time-suffix {
+            color: #666;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 0.3rem;
+        }
+
+        .flight-info-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .flight-detail {
+            font-size: 0.85rem;
+            color: #0066cc;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .flight-detail-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .flight-info-bottom-right {
+            text-align: right;
+        }
+
+        .flight-airline {
+            color: #666;
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .flight-price-bottom {
+            color: #666;
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .flight-price-amount {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--dark-text);
+            margin-bottom: 0.8rem;
+            font-family: "LATAM Sans", "Trebuchet MS", sans-serif;
+        }
+
+        .select-btn {
+            background: var(--secondary-blue);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+
+        .select-btn:hover {
+            background: var(--primary-blue);
+        }
+
+        /* Tariff Panel */
+        .tariff-panel {
+            display: none;
+            background: var(--white);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            animation: slideDown 0.3s ease;
+        }
+
+        .tariff-panel.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tariff-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: "LATAM Sans", "Trebuchet MS", sans-serif;
+        }
+
+        .tariff-icon {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #0066ff, #0052cc);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .tariff-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tariff-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            padding: 0.8rem 0;
+        }
+
+        .tariff-bullet {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 0.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tariff-bullet.teal {
+            background: #14b8a6;
+        }
+
+        .tariff-bullet.orange {
+            background: #ff6b00;
+        }
+
+        .tariff-text {
+            font-size: 0.9rem;
+            color: var(--dark-text);
+            line-height: 1.4;
+            font-family: "LATAM Sans", "Trebuchet MS", sans-serif;
+        }
+
+        .tariff-button {
+            background: var(--secondary-blue);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-family: "LATAM Sans", "Trebuchet MS", sans-serif;
+        }
+
+        .tariff-button:hover {
+            background: var(--primary-blue);
+        }
+            background: linear-gradient(135deg, #f8f8f8, #f0f0f0);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-gray);
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            margin-bottom: 2rem;
+        }
+
+        .footer-logo-img {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .footer-text {
+            color: #666;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 0.8rem 1rem;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .container {
+                max-width: 100%;
+                padding: 1rem 0.75rem;
+            }
+
+            .search-info {
+                flex-direction: column;
+                text-align: left;
+                gap: 1rem;
+                padding: 1.2rem;
+                margin-bottom: 1.5rem;
+                align-items: flex-start;
+            }
+
+            .search-info-left h3 {
+                font-size: 1rem;
+            }
+
+            .search-info-left p {
+                font-size: 0.85rem;
+            }
+
+            .modify-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .date-selector {
+                padding: 0.5rem 0;
+                margin: 0 -0.75rem;
+                padding-left: 0.75rem;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                gap: 0.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .date-btn {
+                padding: 0.8rem 1.2rem;
+                min-width: 90px;
+                font-size: 0.85rem;
+            }
+
+            .date-nav {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+            }
+
+            .filter-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+                padding: 0 0.75rem;
+            }
+
+            .filter-section h2 {
+                font-size: 1.1rem;
+            }
+
+            .sort-dropdown {
+                width: 100%;
+                font-size: 0.9rem;
+            }
+
+            .flight-card {
+                padding: 1.2rem;
+                border-radius: 12px;
+                margin: 0 0.75rem;
+            }
+
+            .flight-header {
+                margin-bottom: 1.2rem;
+            }
+
+            .flight-body {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                margin-bottom: 1rem;
+                padding-bottom: 1rem;
+            }
+
+            .flight-time-big {
+                font-size: 2rem;
+            }
+
+            .flight-duration-text {
+                font-size: 0.75rem;
+            }
+
+            .flight-duration-time {
+                font-size: 0.9rem;
+            }
+
+            .flight-city-code {
+                font-size: 0.75rem;
+            }
+
+            .flight-time-suffix {
+                font-size: 0.65rem;
+            }
+
+            .flight-info-bottom {
+                flex-direction: row;
+                align-items: flex-end;
+                gap: 1rem;
+            }
+
+            .flight-detail-left {
+                gap: 0.2rem;
+            }
+
+            .flight-detail {
+                font-size: 0.8rem;
+            }
+
+            .flight-airline {
+                font-size: 0.75rem;
+            }
+
+            .flight-price-bottom {
+                font-size: 0.75rem;
+            }
+
+            .flight-price-amount {
+                font-size: 1.3rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .select-btn {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.85rem;
+                margin-top: 0.3rem;
+            }
+
+            .flights-grid {
+                gap: 1.2rem;
+            }
+
+            .footer {
+                padding: 2rem 1rem;
+            }
+
+            .footer-logo-img {
+                height: 40px;
+            }
+
+            .footer-text {
+                font-size: 0.75rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.8rem 0.5rem;
+            }
+
+            .search-info {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .flight-card {
+                padding: 1rem;
+                margin: 0 0.5rem;
+            }
+
+            .filter-section {
+                padding: 0 0.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .date-selector {
+                margin: 0 -0.5rem;
+                padding-left: 0.5rem;
+                margin-bottom: 1.2rem;
+            }
+
+            .flight-time-big {
+                font-size: 1.8rem;
+            }
+
+            .flight-price-amount {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <img src="latam.svg" alt="LATAM Airlines" class="logo-img">
+        </div>
+        <div class="header-right">
+            <button class="menu-toggle">☰</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Search Info Bar -->
+        <div class="search-info">
+            <div class="search-info-left">
+                <h3 id="rutaTitle">Montería > Bogotá</h3>
+                <p id="fechaInfo">Saliendo el mar, 23 jun</p>
+            </div>
+            <button class="modify-btn" onclick="volverABuscar()">Modificar</button>
+        </div>
+
+        <!-- Date Selector -->
+        <div class="date-selector">
+            <button class="date-nav" onclick="scrollDates(-1)">‹</button>
+            <button class="date-btn active" id="dateBtn1" onclick="cambiarFecha(0)">lun, 22/06</button>
+            <button class="date-btn" id="dateBtn2" onclick="cambiarFecha(1)">mar, 23/06</button>
+            <button class="date-btn" id="dateBtn3" onclick="cambiarFecha(2)">mié, 24/06</button>
+            <button class="date-nav" onclick="scrollDates(1)">›</button>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h2>Elige un vuelo de ida</h2>
+            <select class="sort-dropdown">
+                <option>Más baratos</option>
+                <option>Más rápidos</option>
+                <option>Más convenientes</option>
+            </select>
+        </div>
+
+        <!-- Flights Grid -->
+        <div class="flights-grid" id="flightsGrid">
+            <!-- Los vuelos se cargarán aquí -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="latam.svg" alt="LATAM Airlines" class="footer-logo-img">
+            </div>
+            
+            <p class="footer-text">
+                © 2026 LATAM Airlines Colombia, NIT: 890.704.196-6, Aerovías de Integración Regional S.A - Aires S.A. Av. El Dorado No.103-08 Entrada 1 - Hangar, customer_service@sac.latam.com, 601 - 5185800
+            </p>
+
+            <p style="color: #999; font-size: 0.9rem; margin-bottom: 1rem; font-weight: 600;">Certificado por:</p>
+
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <img src="vigilado.svg" alt="Vigilado SuperTransporte" style="height: 80px; width: auto; object-fit: contain;">
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Datos de duraciones reales de vuelos en Colombia (en minutos)
+        const distancias = {
+            'BOG': { 'MDE': 90, 'CLO': 70, 'CTG': 80, 'SMR': 80, 'BAQ': 85, 'CUC': 110, 'PEI': 95, 'BGA': 35, 'MZL': 110, 'ARM': 120, 'IBE': 100, 'PAS': 120, 'LET': 150 },
+            'MDE': { 'BOG': 90, 'CLO': 55, 'CTG': 40, 'SMR': 50, 'BAQ': 35, 'CUC': 85, 'PEI': 55, 'BGA': 75, 'MZL': 65, 'ARM': 45, 'IBE': 75, 'PAS': 105, 'LET': 135 },
+            'CLO': { 'BOG': 70, 'MDE': 55, 'CTG': 50, 'SMR': 60, 'BAQ': 45, 'CUC': 105, 'PEI': 80, 'BGA': 65, 'MZL': 90, 'ARM': 60, 'IBE': 55, 'PAS': 85, 'LET': 150 },
+            'CTG': { 'BOG': 80, 'MDE': 40, 'CLO': 50, 'SMR': 20, 'BAQ': 25, 'CUC': 130, 'PEI': 95, 'BGA': 80, 'MZL': 115, 'ARM': 75, 'IBE': 100, 'PAS': 130, 'LET': 165 },
+            'SMR': { 'BOG': 80, 'MDE': 50, 'CLO': 60, 'CTG': 20, 'BAQ': 30, 'CUC': 135, 'PEI': 100, 'BGA': 85, 'MZL': 120, 'ARM': 80, 'IBE': 105, 'PAS': 135, 'LET': 170 },
+            'BAQ': { 'BOG': 85, 'MDE': 35, 'CLO': 45, 'CTG': 25, 'SMR': 30, 'CUC': 115, 'PEI': 80, 'BGA': 80, 'MZL': 100, 'ARM': 55, 'IBE': 90, 'PAS': 125, 'LET': 155 },
+            'CUC': { 'BOG': 110, 'MDE': 85, 'CLO': 105, 'CTG': 130, 'SMR': 135, 'BAQ': 115, 'PEI': 155, 'BGA': 110, 'MZL': 135, 'ARM': 110, 'IBE': 125, 'PAS': 160, 'LET': 195 },
+            'PEI': { 'BOG': 95, 'MDE': 55, 'CLO': 80, 'CTG': 95, 'SMR': 100, 'BAQ': 80, 'CUC': 155, 'BGA': 75, 'MZL': 30, 'ARM': 40, 'IBE': 80, 'PAS': 125, 'LET': 155 },
+            'BGA': { 'BOG': 35, 'MDE': 75, 'CLO': 65, 'CTG': 80, 'SMR': 85, 'BAQ': 80, 'CUC': 110, 'PEI': 75, 'MZL': 85, 'ARM': 70, 'IBE': 70, 'PAS': 115, 'LET': 145 },
+            'MZL': { 'BOG': 110, 'MDE': 65, 'CLO': 90, 'CTG': 115, 'SMR': 120, 'BAQ': 100, 'CUC': 135, 'PEI': 30, 'BGA': 85, 'ARM': 40, 'IBE': 110, 'PAS': 150, 'LET': 180 },
+            'ARM': { 'BOG': 120, 'MDE': 45, 'CLO': 60, 'CTG': 75, 'SMR': 80, 'BAQ': 55, 'CUC': 110, 'PEI': 40, 'BGA': 70, 'MZL': 40, 'IBE': 90, 'PAS': 130, 'LET': 160 },
+        };
+
+        // Generar vuelos dinámicamente
+        function generarVuelos(origenCodigo, destinoCodigo) {
+            const duracionMinutos = distancias[origenCodigo]?.[destinoCodigo] || 120;
+            const duracionHoras = Math.floor(duracionMinutos / 60);
+            const duracionMinutosResto = duracionMinutos % 60;
+            const duracionTexto = duracionHoras > 0 ? `${duracionHoras} h ${duracionMinutosResto} min` : `${duracionMinutosResto} min`;
+
+            const vuelos = [];
+            const horasSalida = [6, 9, 12, 15, 18];
+            const precioBase = 80000 + Math.random() * 30000; // Precio más bajo
+            const descuento = 0.35; // 35% de descuento
+
+            horasSalida.forEach((hora, index) => {
+                const minutosSalida = Math.floor(Math.random() * 60);
+                const horaLlegada = Math.floor((hora * 60 + minutosSalida + duracionMinutos) / 60);
+                const minutosLlegada = (hora * 60 + minutosSalida + duracionMinutos) % 60;
+
+                const salida = `${hora}:${minutosSalida < 10 ? '0' + minutosSalida : minutosSalida}`;
+                const llegada = `${horaLlegada % 24}:${minutosLlegada < 10 ? '0' + minutosLlegada : minutosLlegada}`;
+                
+                // Determinar a. m. o p. m.
+                const salidaSufijo = hora < 12 ? 'a. m.' : 'p. m.';
+                const llegadaSufijo = (horaLlegada % 24) < 12 ? 'a. m.' : 'p. m.';
+                
+                const precioOriginal = Math.round(precioBase + (index * 3000) + (Math.random() * 15000));
+                const precioConDescuento = Math.round(precioOriginal * (1 - descuento));
+
+                vuelos.push({
+                    salida: salida,
+                    salidaSufijo: salidaSufijo,
+                    llegada: llegada,
+                    llegadaSufijo: llegadaSufijo,
+                    origen: origenCodigo,
+                    destino: destinoCodigo,
+                    duracion: duracionTexto,
+                    escalas: "Directo",
+                    aerolinea: "LATAM Airlines Colombia",
+                    precio: precioConDescuento,
+                    precioOriginal: precioOriginal,
+                    priceFormat: `COP ${precioConDescuento.toLocaleString('es-CO')}`,
+                    badge: index === 0 ? "Más económico" : ""
+                });
+            });
+
+            return vuelos;
+        }
+
+        let flightsData = [];
+
+        let currentDate = new Date();
+
+        // Cargar datos de búsqueda desde URL
+        function loadSearchData() {
+            const params = new URLSearchParams(window.location.search);
+            const origen = params.get('origen') || 'Montería (SMR)';
+            const destino = params.get('destino') || 'Bogotá (BOG)';
+            const fechaSalida = params.get('fechaSalida') || new Date().toISOString().split('T')[0];
+
+            // Extraer nombres y códigos
+            const origenNombre = origen.split('(')[0].trim();
+            const destinoNombre = destino.split('(')[0].trim();
+            const origenCodigo = origen.split('(')[1]?.replace(')', '') || 'BOG';
+            const destinoCodigo = destino.split('(')[1]?.replace(')', '') || 'BOG';
+
+            // Actualizar header
+            document.getElementById('rutaTitle').textContent = `${origenNombre} > ${destinoNombre}`;
+            document.getElementById('fechaInfo').textContent = `Saliendo el ${formatDateSpanish(fechaSalida)}`;
+
+            // Establecer fecha actual
+            currentDate = new Date(fechaSalida + 'T00:00:00');
+
+            // Actualizar botones de fecha
+            updateDateButtons();
+
+            // Generar vuelos dinámicamente
+            flightsData = generarVuelos(origenCodigo, destinoCodigo);
+
+            loadFlights();
+        }
+
+        // Formatear fecha en español
+        function formatDateSpanish(dateStr) {
+            const options = { weekday: 'short', month: 'short', day: 'numeric' };
+            const date = new Date(dateStr + 'T00:00:00');
+            return date.toLocaleDateString('es-ES', options).replace(/\./g, '');
+        }
+
+        // Actualizar botones de fecha
+        function updateDateButtons() {
+            for (let i = 0; i < 3; i++) {
+                const futureDate = new Date(currentDate);
+                futureDate.setDate(futureDate.getDate() + i - 1);
+                const btn = document.getElementById(`dateBtn${i + 1}`);
+                const dayNum = futureDate.getDate();
+                const month = futureDate.getMonth() + 1;
+                const dayName = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'][futureDate.getDay()];
+                btn.textContent = `${dayName}, ${dayNum}/${month < 10 ? '0' + month : month}`;
+                
+                if (i === 1) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            }
+        }
+
+        // Cambiar fecha
+        function cambiarFecha(days) {
+            document.querySelectorAll('.date-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // Scroll dates
+        function scrollDates(direction) {
+            const selector = document.querySelector('.date-selector');
+            selector.scrollBy({ left: direction * 100, behavior: 'smooth' });
+        }
+
+        // Cargar vuelos
+        function loadFlights() {
+            const grid = document.getElementById('flightsGrid');
+            grid.innerHTML = '';
+
+            flightsData.forEach(flight => {
+                const card = document.createElement('div');
+                card.className = 'flight-card';
+                
+                let badgeHTML = '';
+                if (flight.badge) {
+                    badgeHTML = `<div class="flight-badge">${flight.badge}</div>`;
+                }
+
+                card.innerHTML = `
+                    <div class="flight-header">
+                        ${badgeHTML}
+                    </div>
+                    <div class="flight-body">
+                        <div class="flight-time">
+                            <div class="flight-time-big">${flight.salida}</div>
+                            <div class="flight-time-suffix">${flight.salidaSufijo}</div>
+                            <div class="flight-city-code">${flight.origen}</div>
+                        </div>
+                        <div class="flight-middle">
+                            <div class="flight-duration-text">Duración</div>
+                            <div class="flight-duration-time">${flight.duracion}</div>
+                        </div>
+                        <div class="flight-time">
+                            <div class="flight-time-big">${flight.llegada}</div>
+                            <div class="flight-time-suffix">${flight.llegadaSufijo}</div>
+                            <div class="flight-city-code">${flight.destino}</div>
+                        </div>
+                    </div>
+                    <div class="flight-info-bottom">
+                        <div class="flight-detail-left">
+                            <div class="flight-detail">Directo</div>
+                            <div class="flight-airline">Operado por ${flight.aerolinea}</div>
+                        </div>
+                        <div class="flight-info-bottom-right">
+                            <div class="flight-price-bottom">Por persona desde</div>
+                            <div class="flight-price-amount">${flight.priceFormat}</div>
+                            <button class="select-btn" onclick="toggleTariffPanel(event, '${flight.salida}', '${flight.llegada}', ${flight.precio})">Seleccionar</button>
+                        </div>
+                    </div>
+                    <div class="tariff-panel" id="tariff-${Math.random().toString(36).substr(2, 9)}">
+                        <div class="tariff-title">
+                            <div class="tariff-icon"></div>
+                            Basic
+                        </div>
+                        <div class="tariff-list">
+                            <div class="tariff-item">
+                                <div class="tariff-bullet teal"></div>
+                                <div class="tariff-text">Bolso o mochila</div>
+                            </div>
+                            <div class="tariff-item">
+                                <div class="tariff-bullet teal"></div>
+                                <div class="tariff-text">Cambio con cargo + diferencia de precio</div>
+                            </div>
+                            <div class="tariff-item">
+                                <div class="tariff-bullet orange"></div>
+                                <div class="tariff-text">No aplican beneficios por categorías de socios</div>
+                            </div>
+                        </div>
+                        <button class="tariff-button" onclick="seleccionarVuelo('${flight.salida}', '${flight.llegada}', ${flight.precio})">Elegir</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Seleccionar vuelo
+        function seleccionarVuelo(salida, llegada, precio) {
+            const params = new URLSearchParams(window.location.search);
+            const origen = params.get('origen') || 'Montería (SMR)';
+            const destino = params.get('destino') || 'Bogotá (BOG)';
+            const fechaSalida = params.get('fechaSalida') || new Date().toISOString().split('T')[0];
+            const pasajeros = params.get('pasajeros') || 1;
+            const ninos = params.get('ninos') || 0;
+
+            // Guardar datos del vuelo de ida
+            sessionStorage.setItem('vuelo_ida', JSON.stringify({
+                salida: salida,
+                llegada: llegada,
+                precio: precio,
+                origen: origen,
+                destino: destino,
+                fechaSalida: fechaSalida,
+                pasajeros: pasajeros,
+                ninos: ninos
+            }));
+
+            // Mostrar vuelos de regreso
+            mostrarVuelosRegreso(origen, destino, precio);
+        }
+
+        // Mostrar vuelos de regreso
+        function mostrarVuelosRegreso(origen, destino, precioIda) {
+            // Invertir origen y destino para el regreso
+            const origenRegreso = destino;
+            const destinoRegreso = origen;
+
+            // Extraer códigos
+            const origenRegresoCode = origenRegreso.split('(')[1]?.replace(')', '') || 'BOG';
+            const destinoRegresoCode = destinoRegreso.split('(')[1]?.replace(')', '') || 'BOG';
+
+            // Generar vuelos de regreso
+            const vuelosRegreso = generarVuelos(origenRegresoCode, destinoRegresoCode);
+
+            // Cambiar título
+            const rutaTitleElement = document.getElementById('rutaTitle');
+            const fechaInfoElement = document.getElementById('fechaInfo');
+            
+            rutaTitleElement.textContent = `${origenRegreso.split('(')[0].trim()} > ${destinoRegreso.split('(')[0].trim()}`;
+            fechaInfoElement.textContent = 'Selecciona tu vuelo de regreso';
+
+            // Cambiar encabezado de filtros
+            const filterSection = document.querySelector('.filter-section h2');
+            filterSection.textContent = 'Elige un vuelo de regreso';
+
+            // Cargar vuelos de regreso
+            const grid = document.getElementById('flightsGrid');
+            grid.innerHTML = '';
+
+            vuelosRegreso.forEach(flight => {
+                const card = document.createElement('div');
+                card.className = 'flight-card';
+                
+                let badgeHTML = '';
+                if (flight.badge) {
+                    badgeHTML = `<div class="flight-badge">${flight.badge}</div>`;
+                }
+
+                card.innerHTML = `
+                    <div class="flight-header">
+                        ${badgeHTML}
+                    </div>
+                    <div class="flight-body">
+                        <div class="flight-time">
+                            <div class="flight-time-big">${flight.salida}</div>
+                            <div class="flight-time-suffix">${flight.salidaSufijo}</div>
+                            <div class="flight-city-code">${flight.origen}</div>
+                        </div>
+                        <div class="flight-middle">
+                            <div class="flight-duration-text">Duración</div>
+                            <div class="flight-duration-time">${flight.duracion}</div>
+                        </div>
+                        <div class="flight-time">
+                            <div class="flight-time-big">${flight.llegada}</div>
+                            <div class="flight-time-suffix">${flight.llegadaSufijo}</div>
+                            <div class="flight-city-code">${flight.destino}</div>
+                        </div>
+                    </div>
+                    <div class="flight-info-bottom">
+                        <div class="flight-detail-left">
+                            <div class="flight-detail">Directo</div>
+                            <div class="flight-airline">Operado por ${flight.aerolinea}</div>
+                        </div>
+                        <div class="flight-info-bottom-right">
+                            <div class="flight-price-bottom">Por persona desde</div>
+                            <div class="flight-price-amount">${flight.priceFormat}</div>
+                            <button class="select-btn" onclick="toggleTariffPanelRegreso(event, '${flight.salida}', '${flight.llegada}', ${flight.precio}, ${precioIda})">Seleccionar</button>
+                        </div>
+                    </div>
+                    <div class="tariff-panel" id="tariff-${Math.random().toString(36).substr(2, 9)}">
+                        <div class="tariff-title">
+                            <div class="tariff-icon"></div>
+                            Basic
+                        </div>
+                        <div class="tariff-list">
+                            <div class="tariff-item">
+                                <div class="tariff-bullet teal"></div>
+                                <div class="tariff-text">Bolso o mochila</div>
+                            </div>
+                            <div class="tariff-item">
+                                <div class="tariff-bullet teal"></div>
+                                <div class="tariff-text">Cambio con cargo + diferencia de precio</div>
+                            </div>
+                            <div class="tariff-item">
+                                <div class="tariff-bullet orange"></div>
+                                <div class="tariff-text">No aplican beneficios por categorías de socios</div>
+                            </div>
+                        </div>
+                        <button class="tariff-button" onclick="confirmarVueloRegreso('${flight.salida}', '${flight.llegada}', ${flight.precio}, ${precioIda})">Elegir</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            // Scroll hacia arriba
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Toggle tariff panel para regreso
+        function toggleTariffPanelRegreso(event, salida, llegada, precio, precioIda) {
+            event.preventDefault();
+            const card = event.target.closest('.flight-card');
+            const tariffPanel = card.querySelector('.tariff-panel');
+            
+            // Cerrar otros paneles
+            document.querySelectorAll('.tariff-panel.active').forEach(panel => {
+                if (panel !== tariffPanel) {
+                    panel.classList.remove('active');
+                }
+            });
+            
+            // Toggle el panel actual
+            tariffPanel.classList.toggle('active');
+        }
+
+        // Confirmar vuelo de regreso
+        function confirmarVueloRegreso(salida, llegada, precioRegreso, precioIda) {
+            const vueloIda = JSON.parse(sessionStorage.getItem('vuelo_ida'));
+            
+            const queryParams = new URLSearchParams({
+                origen: vueloIda.origen,
+                destino: vueloIda.destino,
+                fechaSalida: vueloIda.fechaSalida,
+                pasajeros: vueloIda.pasajeros,
+                ninos: vueloIda.ninos,
+                salidaIda: vueloIda.salida,
+                llegadaIda: vueloIda.llegada,
+                precioIda: vueloIda.precio,
+                salidaRegreso: salida,
+                llegadaRegreso: llegada,
+                precioRegreso: precioRegreso,
+                precioTotal: (parseInt(vueloIda.precio) + parseInt(precioRegreso)) * parseInt(vueloIda.pasajeros)
+            });
+
+            window.location.href = `coti.html?${queryParams.toString()}`;
+        }
+
+        // Volver a buscar
+        function volverABuscar() {
+            window.location.href = 'index.html';
+        }
+
+        // Toggle tariff panel
+        function toggleTariffPanel(event, salida, llegada, precio) {
+            event.preventDefault();
+            const card = event.target.closest('.flight-card');
+            const tariffPanel = card.querySelector('.tariff-panel');
+            
+            // Cerrar otros paneles
+            document.querySelectorAll('.tariff-panel.active').forEach(panel => {
+                if (panel !== tariffPanel) {
+                    panel.classList.remove('active');
+                }
+            });
+            
+            // Toggle el panel actual
+            tariffPanel.classList.toggle('active');
+        }
+
+        // Seleccionar vuelo
+        window.addEventListener('load', loadSearchData);
+    </script>
+</body>
+</html>

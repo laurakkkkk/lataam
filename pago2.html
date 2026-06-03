@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datos de Pasajeros - LATAM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #1a0a5c;
+            --secondary-blue: #2d1b8f;
+            --accent-pink: #e91e63;
+            --light-gray: #f5f5f5;
+            --dark-text: #1a1a1a;
+            --border-gray: #e0e0e0;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: var(--white);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo-img {
+            height: 28px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            color: var(--secondary-blue);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .route-info {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .route-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--secondary-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .route-date {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .passengers-container {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+        }
+
+        .passenger-form {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--border-gray);
+        }
+
+        .passenger-form:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .passenger-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--secondary-blue);
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--secondary-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-gray);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+            box-shadow: 0 0 8px rgba(45, 27, 143, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-gray);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background-color: var(--white);
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+            box-shadow: 0 0 8px rgba(45, 27, 143, 0.2);
+        }
+
+        .next-btn {
+            background: var(--accent-pink);
+            color: var(--white);
+            border: none;
+            padding: 1.2rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .next-btn:hover {
+            background: #d81b60;
+        }
+
+        .next-btn:active {
+            transform: scale(0.98);
+        }
+
+        .next-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .price-footer {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .price-label {
+            font-size: 0.85rem;
+            color: var(--secondary-blue);
+            font-weight: 600;
+        }
+
+        .price-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark-text);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem 0.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .route-title {
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="latam.svg" alt="LATAM Airlines" class="logo-img">
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="section-title">Datos de los pasajeros</div>
+
+        <div class="route-info">
+            <div class="route-title" id="routeTitle">Bogotá a Medellín</div>
+            <div class="route-date" id="routeDate">17 de junio</div>
+        </div>
+
+        <div class="passengers-container">
+            <div id="passengersForm">
+                <!-- Los formularios de pasajeros se generarán aquí -->
+            </div>
+        </div>
+
+        <button class="next-btn" onclick="goToPayment()">Ir a Pago</button>
+
+        <div class="price-footer">
+            <div class="price-label">Precio total</div>
+            <div class="price-value" id="priceValue">COP 406.570</div>
+        </div>
+    </div>
+
+    <script>
+        let passengersData = {};
+
+        function loadPageData() {
+            const params = new URLSearchParams(window.location.search);
+            
+            const origen = params.get('origen') || 'Bogotá (BOG)';
+            const destino = params.get('destino') || 'Medellín (MDE)';
+            const fechaSalida = params.get('fechaSalida') || '2026-06-17';
+            const horaSalida = params.get('horaSalida') || '08:00';
+            const pasajeros = parseInt(params.get('pasajeros')) || 1;
+            const precioTotal = params.get('precioTotal') || 406570;
+            const asientosVuelo1 = JSON.parse(params.get('asientosVuelo1') || '[]');
+            const asientosVuelo2 = JSON.parse(params.get('asientosVuelo2') || '[]');
+
+            // Guardar datos globales
+            window.paymentData = {
+                origen,
+                destino,
+                fechaSalida,
+                horaSalida,
+                pasajeros,
+                precioTotal,
+                asientosVuelo1,
+                asientosVuelo2
+            };
+
+            // Actualizar UI
+            const origenNombre = origen.split('(')[0].trim();
+            const destinoNombre = destino.split('(')[0].trim();
+            document.getElementById('routeTitle').textContent = `${origenNombre} a ${destinoNombre}`;
+            document.getElementById('routeDate').textContent = formatDateSpanish(fechaSalida);
+            document.getElementById('priceValue').textContent = `COP ${parseInt(precioTotal).toLocaleString('es-CO')}`;
+
+            // Generar formularios
+            generatePassengerForms(pasajeros);
+        }
+
+        function generatePassengerForms(numPasajeros) {
+            const container = document.getElementById('passengersForm');
+            container.innerHTML = '';
+
+            for (let i = 1; i <= numPasajeros; i++) {
+                const formDiv = document.createElement('div');
+                formDiv.className = 'passenger-form';
+                formDiv.innerHTML = `
+                    <div class="passenger-title">Pasajero ${i}</div>
+                    <div class="form-group">
+                        <label for="nombre${i}">Nombre completo</label>
+                        <input type="text" id="nombre${i}" placeholder="Ej: Juan Pérez" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tipoDoc${i}">Tipo de documento</label>
+                            <select id="tipoDoc${i}" required>
+                                <option value="">Selecciona tipo</option>
+                                <option value="CC">Cédula de Ciudadanía (CC)</option>
+                                <option value="TI">Tarjeta de Identidad (TI)</option>
+                                <option value="PEP">Pasaporte (PEP)</option>
+                                <option value="CE">Cédula de Extranjería (CE)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="documento${i}">Número de documento</label>
+                            <input type="text" id="documento${i}" placeholder="Ej: 1234567890" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="numero${i}">Número de teléfono</label>
+                            <input type="text" id="numero${i}" placeholder="Ej: 3001234567" required>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(formDiv);
+                
+                passengersData[`pasajero${i}`] = {
+                    nombre: '',
+                    tipoDoc: '',
+                    documento: '',
+                    numero: ''
+                };
+            }
+        }
+
+        function formatDateSpanish(dateStr) {
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            const date = new Date(dateStr + 'T00:00:00');
+            const formatted = date.toLocaleDateString('es-ES', options);
+            return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+        }
+
+        function goToPayment() {
+            const numPasajeros = window.paymentData.pasajeros;
+            let allValid = true;
+
+            // Validar y recopilar datos
+            for (let i = 1; i <= numPasajeros; i++) {
+                const nombre = document.getElementById(`nombre${i}`).value.trim();
+                const tipoDoc = document.getElementById(`tipoDoc${i}`).value.trim();
+                const documento = document.getElementById(`documento${i}`).value.trim();
+                const numero = document.getElementById(`numero${i}`).value.trim();
+
+                if (!nombre || !tipoDoc || !documento || !numero) {
+                    alert(`Por favor completa todos los datos del pasajero ${i}`);
+                    allValid = false;
+                    break;
+                }
+
+                passengersData[`pasajero${i}`] = {
+                    nombre,
+                    tipoDoc,
+                    documento,
+                    numero
+                };
+            }
+
+            if (!allValid) return;
+
+            // Ir a pago2.html con todos los datos
+            const params = new URLSearchParams();
+            Object.keys(window.paymentData).forEach(key => {
+                if (Array.isArray(window.paymentData[key])) {
+                    params.set(key, JSON.stringify(window.paymentData[key]));
+                } else {
+                    params.set(key, window.paymentData[key]);
+                }
+            });
+            params.set('pasajeros', JSON.stringify(passengersData));
+            
+            window.location.href = `pasarela.html?${params.toString()}`;
+        }
+
+        window.addEventListener('load', loadPageData);
+    </script>
+</body>
+</html>

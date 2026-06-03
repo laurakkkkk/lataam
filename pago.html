@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selecciona tus asientos - LATAM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #1a0a5c;
+            --secondary-blue: #2d1b8f;
+            --accent-orange: #ff6b00;
+            --accent-pink: #e91e63;
+            --light-gray: #f5f5f5;
+            --dark-text: #1a1a1a;
+            --border-gray: #e0e0e0;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: var(--white);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo-img {
+            height: 28px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+            margin-left: 0;
+        }
+
+        /* Title */
+        .section-title {
+            font-size: 0.95rem;
+            color: var(--secondary-blue);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Route Info */
+        .route-info {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .route-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--secondary-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .route-date {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* Seats Section */
+        .seats-container {
+            background: var(--white);
+            padding: 1.5rem 1rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .seats-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            margin-bottom: 1.5rem;
+            padding: 0;
+            min-width: fit-content;
+        }
+
+        .row-container {
+            display: grid;
+            grid-template-columns: 25px 1fr 18px 1fr;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .row-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #999;
+            text-align: center;
+        }
+
+        .seats-group {
+            display: flex;
+            gap: 0.6rem;
+            justify-content: center;
+        }
+
+        .seat {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: transparent;
+            color: #999;
+            position: relative;
+            padding: 1px;
+            flex-shrink: 0;
+        }
+
+        .seat-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .seat.available:hover .seat-img {
+            filter: brightness(1.1);
+        }
+
+        .seat.available:active {
+            transform: scale(0.95);
+        }
+
+        .seat.selected .seat-img {
+            filter: brightness(1.5) drop-shadow(0 0 15px #228B22) drop-shadow(0 0 25px #1a7a1a) drop-shadow(0 0 35px rgba(34, 139, 34, 1));
+        }
+
+        .seat.occupied {
+            cursor: not-allowed;
+        }
+
+        .seat.occupied .seat-img {
+            filter: brightness(0.6) opacity(0.5);
+        }
+
+        .seat.disabled {
+            visibility: hidden;
+        }
+
+        /* Seat Legend */
+        .seat-legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            font-size: 0.75rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-gray);
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-seat {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid var(--border-gray);
+        }
+
+        .legend-seat.selected {
+            background: #4CAF50;
+            border-color: #4CAF50;
+        }
+
+        .legend-seat.occupied {
+            background: #f0f0f0;
+            border-color: #ccc;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 70px;
+            width: 0px;
+            height: calc(100vh - 70px);
+            background: linear-gradient(180deg, var(--accent-pink) 0%, #d81b60 100%);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            padding: 20px 0;
+        }
+
+        .sidebar-text {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            color: var(--white);
+            font-weight: 700;
+            font-size: 0.65rem;
+            letter-spacing: 0.5px;
+            transform: rotate(180deg);
+            word-spacing: 1px;
+        }
+
+        /* Next Button */
+        .next-btn {
+            background: var(--accent-pink);
+            color: var(--white);
+            border: none;
+            padding: 1.2rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            font-family: "LATAM Sans", "Trebuchet MS", sans-serif;
+        }
+
+        .next-btn:hover {
+            background: #d81b60;
+        }
+
+        .next-btn:active {
+            transform: scale(0.98);
+        }
+
+        .next-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* Price Footer */
+        .price-footer {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .price-label {
+            font-size: 0.85rem;
+            color: var(--secondary-blue);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .price-label-icon {
+            font-size: 0.7rem;
+        }
+
+        .price-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            font-family: "LATAM Sans", "Trebuchet MS", sans-serif;
+        }
+
+        .seat-count {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 0.3rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem 0.5rem;
+                margin-left: 0;
+            }
+
+            .seats-container {
+                padding: 1rem;
+            }
+
+            .row-container {
+                grid-template-columns: 22px 1fr 15px 1fr;
+                gap: 0.5rem;
+            }
+
+            .seat {
+                width: 48px;
+                height: 48px;
+                font-size: 0.55rem;
+            }
+
+            .seat-legend {
+                gap: 1.5rem;
+                font-size: 0.7rem;
+            }
+
+            .legend-seat {
+                width: 18px;
+                height: 18px;
+            }
+
+            .next-btn {
+                padding: 1rem;
+                font-size: 0.95rem;
+            }
+
+            .price-value {
+                font-size: 1rem;
+            }
+
+            .row-label {
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.8rem 0.5rem;
+                margin-left: 0;
+            }
+
+            .seats-container {
+                padding: 0.8rem;
+            }
+
+            .row-container {
+                grid-template-columns: 20px 1fr 12px 1fr;
+                gap: 0.5rem;
+            }
+
+            .seat {
+                width: 45px;
+                height: 45px;
+                font-size: 0.5rem;
+            }
+
+            .seats-group {
+                gap: 0.5rem;
+            }
+
+            .seat-legend {
+                gap: 1rem;
+                font-size: 0.65rem;
+            }
+
+            .legend-seat {
+                width: 16px;
+                height: 16px;
+            }
+
+            .route-title {
+                font-size: 0.95rem;
+            }
+
+            .route-date {
+                font-size: 0.75rem;
+            }
+
+            .row-label {
+                font-size: 0.65rem;
+            }
+
+            .section-title {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <img src="latam.svg" alt="LATAM Airlines" class="logo-img">
+        </div>
+    </header>
+
+    <!-- Sidebar (hidden on mobile) -->
+    <div class="sidebar">
+        <div class="sidebar-text">LATAM</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="section-title">Elige tus asientos</div>
+
+        <!-- Route Info -->
+        <div class="route-info">
+            <div class="route-title" id="routeTitle">Bogotá a Medellín</div>
+            <div class="route-date" id="routeDate">17 de junio (Vuelo 1 de 2)</div>
+        </div>
+
+        <!-- Seats Section -->
+        <div class="seats-container">
+            <div class="seats-grid" id="seatsGrid">
+                <!-- Los asientos se generarán aquí -->
+            </div>
+
+            <div class="seat-legend">
+                <div class="legend-item">
+                    <div class="legend-seat"></div>
+                    <span>Disponible</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-seat selected"></div>
+                    <span>Seleccionado</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-seat occupied"></div>
+                    <span>Ocupado</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Button -->
+        <button class="next-btn" id="nextBtn" onclick="nextStep()" disabled>
+            Selecciona asientos para continuar
+        </button>
+
+        <!-- Price Footer -->
+        <div class="price-footer">
+            <div>
+                <div class="price-label" onclick="togglePrice()">
+                    Precio final
+                    <span class="price-label-icon">▲</span>
+                </div>
+                <span class="seat-count" id="seatCount">0 asientos seleccionados</span>
+            </div>
+            <div class="price-value" id="priceValue">COP 406.570</div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de asientos
+        const ROWS = 25;
+        const SEATS_PER_ROW = 6;
+        const SEAT_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+        
+        let selectedSeats = { vuelo1: [], vuelo2: [] };
+        let currentFlight = 1;
+
+        // Cargar datos desde URL
+        function loadPaymentData() {
+            const params = new URLSearchParams(window.location.search);
+            
+            const origen = params.get('origen') || 'Bogotá (BOG)';
+            const destino = params.get('destino') || 'Medellín (MDE)';
+            const fechaSalida = params.get('fechaSalida') || '2026-06-17';
+            const horaSalida = params.get('horaSalida') || '08:00';
+            const fechaRegreso = params.get('fechaRegreso') || '2026-06-24';
+            const horaRegreso = params.get('horaRegreso') || '14:00';
+            const pasajeros = parseInt(params.get('pasajeros')) || 1;
+            const precioTotal = params.get('precioTotal') || 406570;
+
+            // Guardar en variables globales
+            window.paymentData = {
+                origen,
+                destino,
+                fechaSalida,
+                horaSalida,
+                fechaRegreso,
+                horaRegreso,
+                pasajeros,
+                precioTotal
+            };
+
+            // Extraer nombres
+            const origenNombre = origen.split('(')[0].trim();
+            const destinoNombre = destino.split('(')[0].trim();
+
+            // Actualizar información para vuelo 1 (ida)
+            document.getElementById('routeTitle').textContent = `${origenNombre} a ${destinoNombre}`;
+            document.getElementById('routeDate').textContent = `${formatDateSpanish(fechaSalida)} - ${horaSalida} (Vuelo 1 de 2)`;
+            document.getElementById('priceValue').textContent = `COP ${parseInt(precioTotal).toLocaleString('es-CO')}`;
+
+            // Generar asientos
+            generateSeats(pasajeros);
+
+            // Guardar pasajeros
+            window.paymentData.pasajeros = pasajeros;
+        }
+
+        // Generar asientos
+        function generateSeats(pasajeros) {
+            const grid = document.getElementById('seatsGrid');
+            grid.innerHTML = '';
+
+            // Crear asientos ocupados aleatoriamente (45% ocupados)
+            const occupiedSeats = new Set();
+            const totalSeats = ROWS * SEATS_PER_ROW;
+            const occupiedCount = Math.floor(totalSeats * 0.45);
+
+            for (let i = 0; i < occupiedCount; i++) {
+                occupiedSeats.add(Math.floor(Math.random() * totalSeats));
+            }
+
+            // Generar grid con estructura mejorada para mobile
+            let seatIndex = 0;
+            for (let row = 1; row <= ROWS; row++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'row-container';
+
+                // Número de fila
+                const rowLabel = document.createElement('div');
+                rowLabel.className = 'row-label';
+                rowLabel.textContent = row;
+                rowDiv.appendChild(rowLabel);
+
+                // Primer grupo de asientos (A, B, C)
+                const group1 = document.createElement('div');
+                group1.className = 'seats-group';
+                
+                for (let col = 0; col < 3; col++) {
+                    const seatId = `${row}${SEAT_LETTERS[col]}`;
+                    const isOccupied = occupiedSeats.has(seatIndex);
+
+                    const seat = document.createElement('div');
+                    seat.className = `seat ${isOccupied ? 'occupied' : 'available'}`;
+                    seat.id = `seat-${seatId}`;
+                    
+                    const img = document.createElement('img');
+                    img.src = 'seat.png';
+                    img.alt = seatId;
+                    img.className = 'seat-img';
+                    seat.appendChild(img);
+
+                    if (!isOccupied) {
+                        seat.onclick = () => toggleSeat(seatId, pasajeros);
+                    }
+
+                    group1.appendChild(seat);
+                    seatIndex++;
+                }
+                rowDiv.appendChild(group1);
+
+                // Espaciador (pasillo)
+                const spacer = document.createElement('div');
+                spacer.style.width = '100%';
+                rowDiv.appendChild(spacer);
+
+                // Segundo grupo de asientos (D, E, F)
+                const group2 = document.createElement('div');
+                group2.className = 'seats-group';
+                
+                for (let col = 3; col < 6; col++) {
+                    const seatId = `${row}${SEAT_LETTERS[col]}`;
+                    const isOccupied = occupiedSeats.has(seatIndex);
+
+                    const seat = document.createElement('div');
+                    seat.className = `seat ${isOccupied ? 'occupied' : 'available'}`;
+                    seat.id = `seat-${seatId}`;
+                    
+                    const img = document.createElement('img');
+                    img.src = 'seat.png';
+                    img.alt = seatId;
+                    img.className = 'seat-img';
+                    seat.appendChild(img);
+
+                    if (!isOccupied) {
+                        seat.onclick = () => toggleSeat(seatId, pasajeros);
+                    }
+
+                    group2.appendChild(seat);
+                    seatIndex++;
+                }
+                rowDiv.appendChild(group2);
+
+                grid.appendChild(rowDiv);
+            }
+        }
+
+        // Toggle asiento seleccionado
+        function toggleSeat(seatId, pasajeros) {
+            const seat = document.getElementById(`seat-${seatId}`);
+            const currentSeats = selectedSeats[`vuelo${currentFlight}`];
+            
+            if (seat.classList.contains('selected')) {
+                seat.classList.remove('selected');
+                currentSeats.splice(currentSeats.indexOf(seatId), 1);
+            } else {
+                if (currentSeats.length < pasajeros) {
+                    seat.classList.add('selected');
+                    currentSeats.push(seatId);
+                } else {
+                    // Deseleccionar el primer asiento y seleccionar el nuevo
+                    const firstSeat = document.getElementById(`seat-${currentSeats[0]}`);
+                    firstSeat.classList.remove('selected');
+                    currentSeats.shift();
+                    
+                    seat.classList.add('selected');
+                    currentSeats.push(seatId);
+                }
+            }
+            
+            updateUI();
+        }
+
+        // Actualizar UI
+        function updateUI() {
+            const currentSeats = selectedSeats[`vuelo${currentFlight}`];
+            const seatsNeeded = window.paymentData.pasajeros;
+            const seatCount = currentSeats.length;
+
+            document.getElementById('seatCount').textContent = 
+                `${seatCount} de ${seatsNeeded} asiento(s)`;
+
+            const nextBtn = document.getElementById('nextBtn');
+            if (seatCount === seatsNeeded) {
+                nextBtn.disabled = false;
+                if (currentFlight === 1) {
+                    nextBtn.textContent = 'Pasar al siguiente vuelo';
+                } else {
+                    nextBtn.textContent = 'Confirmar y pagar';
+                }
+            } else {
+                nextBtn.disabled = true;
+                nextBtn.textContent = `Selecciona ${seatsNeeded - seatCount} asiento(s) más`;
+            }
+        }
+
+        // Formatear fecha en español
+        function formatDateSpanish(dateStr) {
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            const date = new Date(dateStr + 'T00:00:00');
+            const formatted = date.toLocaleDateString('es-ES', options);
+            return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+        }
+
+        // Siguiente paso
+        function nextStep() {
+            const pasajeros = window.paymentData.pasajeros;
+            const currentSeats = selectedSeats[`vuelo${currentFlight}`];
+
+            if (currentSeats.length < pasajeros) {
+                alert(`Por favor selecciona ${pasajeros} asiento(s)`);
+                return;
+            }
+
+            if (currentFlight === 1) {
+                // Cambiar a vuelo 2 (regreso)
+                currentFlight = 2;
+                selectedSeats.vuelo2 = [];
+
+                const origenNombre = window.paymentData.destino.split('(')[0].trim();
+                const destinoNombre = window.paymentData.origen.split('(')[0].trim();
+
+                // Actualizar para vuelo de regreso
+                document.getElementById('routeTitle').textContent = `${origenNombre} a ${destinoNombre}`;
+                document.getElementById('routeDate').textContent = `${formatDateSpanish(window.paymentData.fechaRegreso)} - ${window.paymentData.horaRegreso} (Vuelo 2 de 2)`;
+                
+                // Regenerar asientos
+                generateSeats(window.paymentData.pasajeros);
+                updateUI();
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                // Ir a pago2
+                const params = new URLSearchParams(window.location.search);
+                const paymentParams = new URLSearchParams(params);
+                paymentParams.set('asientosVuelo1', JSON.stringify(selectedSeats.vuelo1));
+                paymentParams.set('asientosVuelo2', JSON.stringify(selectedSeats.vuelo2));
+                window.location.href = `pago2.html?${paymentParams.toString()}`;
+            }
+        }
+
+        // Toggle precio (expandir/contraer)
+        function togglePrice() {
+            const label = document.querySelector('.price-label-icon');
+            label.textContent = label.textContent === '▲' ? '▼' : '▲';
+        }
+
+        // Cargar datos al abrir
+        window.addEventListener('load', loadPaymentData);
+    </script>
+</body>
+</html>

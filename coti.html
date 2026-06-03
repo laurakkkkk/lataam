@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotización - LATAM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #1a0a5c;
+            --secondary-blue: #2d1b8f;
+            --accent-orange: #ff6b00;
+            --light-gray: #f5f5f5;
+            --dark-text: #1a1a1a;
+            --border-gray: #e0e0e0;
+            --white: #ffffff;
+            --success-green: #10b981;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: var(--white);
+            padding: 1rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo-img {
+            height: 30px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.85rem;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+        }
+
+        /* Title Section */
+        .trip-summary {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .trip-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .trip-route {
+            font-size: 0.9rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .trip-badge {
+            background: var(--secondary-blue);
+            color: var(--white);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        /* Flight Card */
+        .flight-section {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .flight-section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .flight-section-title-icon {
+            width: 16px;
+            height: 16px;
+            background: var(--success-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .flight-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .flight-time-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .flight-time-big {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: var(--primary-blue);
+            font-family: "LATAM Sans", "Trebuchet MS", sans-serif;
+        }
+
+        .flight-time-suffix {
+            font-size: 0.7rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .flight-city-code {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 0.2rem;
+        }
+
+        .flight-middle-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            flex: 1;
+            margin: 0 1rem;
+        }
+
+        .flight-duration {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .flight-type {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .flight-bottom-info {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .flight-tariff {
+            background: rgba(20, 184, 166, 0.1);
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+        }
+
+        .tariff-label {
+            font-size: 0.75rem;
+            color: #666;
+            margin-bottom: 0.2rem;
+        }
+
+        .tariff-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .tariff-includes {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .change-selection {
+            color: var(--accent-orange);
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        /* Price Section */
+        .price-section {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .price-section h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 1rem;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .price-item:last-child {
+            border-bottom: none;
+        }
+
+        .price-item-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .price-item-value {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .price-item.discount {
+            background: rgba(16, 185, 129, 0.05);
+            padding: 0.8rem;
+            border-radius: 6px;
+            margin: 0.5rem 0;
+        }
+
+        .price-item.discount .price-item-value {
+            color: var(--success-green);
+        }
+
+        .price-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--secondary-blue);
+        }
+
+        .price-total-label {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--dark-text);
+        }
+
+        .price-total-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary-blue);
+            font-family: "LATAM Sans", "Trebuchet MS", sans-serif;
+        }
+
+        .price-note {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Continue Button */
+        .continue-btn {
+            background: var(--secondary-blue);
+            color: var(--white);
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+            font-family: "LATAM Sans", "Trebuchet MS", sans-serif;
+        }
+
+        .continue-btn:hover {
+            background: var(--primary-blue);
+        }
+
+        .continue-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, #f8f8f8, #f0f0f0);
+            padding: 2rem 1rem;
+            text-align: center;
+            border-top: 1px solid var(--border-gray);
+            margin-top: 2rem;
+        }
+
+        .footer-text {
+            color: #666;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo {
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo-img {
+            height: 35px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem 0.75rem;
+            }
+
+            header {
+                padding: 0.8rem 0.75rem;
+            }
+
+            .trip-summary {
+                padding: 1.2rem;
+                margin-bottom: 1.2rem;
+            }
+
+            .flight-section {
+                padding: 1.2rem;
+                margin-bottom: 1.2rem;
+            }
+
+            .flight-main {
+                margin-bottom: 0.8rem;
+                padding-bottom: 0.8rem;
+            }
+
+            .price-section {
+                padding: 1.2rem;
+                margin-bottom: 1.2rem;
+            }
+
+            .flight-time-big {
+                font-size: 1.5rem;
+            }
+
+            .price-total-value {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <img src="latam.svg" alt="LATAM Airlines" class="logo-img">
+        </div>
+        <div class="header-info">
+            <span id="currencyInfo">COP $</span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Trip Summary -->
+        <div class="trip-summary">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.8rem;">
+                <div>
+                    <div class="trip-title" id="tripTitle">Resumen de tu viaje</div>
+                    <div class="trip-route">
+                        <span id="tripRoute">Bogotá > Medellín</span>
+                    </div>
+                </div>
+                <div class="trip-badge" id="tripBadge">Ida y vuelta</div>
+            </div>
+        </div>
+
+        <!-- Vuelo de Ida -->
+        <div class="flight-section">
+            <div class="flight-section-title">
+                <div class="flight-section-title-icon">✓</div>
+                <span id="outboundRouteDisplay">Bogotá a Medellín</span> <span style="font-size: 0.8rem; font-weight: 400; color: #666; margin-left: 0.5rem;" id="outboundDate">dom, 14 jun</span>
+            </div>
+
+            <div class="flight-main">
+                <div class="flight-time-section">
+                    <div class="flight-time-big" id="outboundTime">6:40</div>
+                    <div class="flight-time-suffix" id="outboundSuffix">a. m.</div>
+                    <div class="flight-city-code" id="outboundOrigin">BOG</div>
+                </div>
+
+                <div class="flight-middle-info">
+                    <div class="flight-duration" id="outboundDuration">Directo</div>
+                    <div class="flight-type" id="outboundFlightType">1 h 30 min</div>
+                </div>
+
+                <div class="flight-time-section">
+                    <div class="flight-time-big" id="inboundTime">8:10</div>
+                    <div class="flight-time-suffix" id="inboundSuffix">a. m.</div>
+                    <div class="flight-city-code" id="inboundDestination">MDE</div>
+                </div>
+            </div>
+
+            <div class="flight-bottom-info">
+                Operado por LATAM Airlines Colombia
+            </div>
+
+            <div class="flight-tariff">
+                <div class="tariff-label">Tarifa</div>
+                <div class="tariff-name">Basic</div>
+                <div class="tariff-includes">
+                    Incluye bolso o mochila (para llevar debajo de tu asiento), No aplican beneficios por categoría de socio LATAM Plus.
+                </div>
+            </div>
+
+            <a href="#" class="change-selection">Cambiar tu selección</a>
+        </div>
+
+        <!-- Vuelo de Regreso -->
+        <div class="flight-section">
+            <div class="flight-section-title">
+                <div class="flight-section-title-icon">✓</div>
+                <span id="returnRouteDisplay">Medellín a Bogotá</span> <span style="font-size: 0.8rem; font-weight: 400; color: #666; margin-left: 0.5rem;" id="returnDate">dom, 12 jul</span>
+            </div>
+
+            <div class="flight-main">
+                <div class="flight-time-section">
+                    <div class="flight-time-big" id="returnOutboundTime">9:55</div>
+                    <div class="flight-time-suffix" id="returnOutboundSuffix">a. m.</div>
+                    <div class="flight-city-code" id="returnOutboundOrigin">MDE</div>
+                </div>
+
+                <div class="flight-middle-info">
+                    <div class="flight-duration" id="returnDuration">Directo</div>
+                    <div class="flight-type" id="returnFlightType">1 h 30 min</div>
+                </div>
+
+                <div class="flight-time-section">
+                    <div class="flight-time-big" id="returnInboundTime">11:25</div>
+                    <div class="flight-time-suffix" id="returnInboundSuffix">a. m.</div>
+                    <div class="flight-city-code" id="returnInboundDestination">BOG</div>
+                </div>
+            </div>
+
+            <div class="flight-bottom-info">
+                Operado por LATAM Airlines Colombia
+            </div>
+
+            <div class="flight-tariff">
+                <div class="tariff-label">Tarifa</div>
+                <div class="tariff-name">Basic</div>
+                <div class="tariff-includes">
+                    Incluye bolso o mochila (para llevar debajo de tu asiento), No aplican beneficios por categoría de socio LATAM Plus.
+                </div>
+            </div>
+
+            <a href="#" class="change-selection">Cambiar tu selección</a>
+        </div>
+
+        <!-- Price Summary -->
+        <div class="price-section">
+            <h3>Desglose de precios</h3>
+
+            <div class="price-item">
+                <span class="price-item-label">Vuelos (ida y vuelta)</span>
+                <span class="price-item-value" id="flightPrice">COP 343.200</span>
+            </div>
+
+            <div class="price-item">
+                <span class="price-item-label">Tasas, cargos e impuestos</span>
+                <span class="price-item-value" id="taxesPrice">COP 95.580</span>
+            </div>
+
+            <div class="price-item discount">
+                <span class="price-item-label">Descuento aplicado (35%)</span>
+                <span class="price-item-value">-COP <span id="discountAmount">122.329</span></span>
+            </div>
+
+            <div class="price-total">
+                <span class="price-total-label">Subtotal</span>
+                <span class="price-total-value" id="subtotal">COP 343.380</span>
+            </div>
+
+            <div class="price-note">
+                Por persona. Incluye tasas, cargos e impuestos. Los precios pueden variar según disponibilidad de la tarifa al momento de comprar. El precio se confirmará al llegar al paso de pago.
+            </div>
+        </div>
+
+        <!-- Continue Button -->
+        <button class="continue-btn" onclick="continueToPayment()">Continuar</button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-logo">
+            <img src="latam2.svg" alt="LATAM Airlines" class="footer-logo-img">
+        </div>
+        <p class="footer-text">
+            © 2026 LATAM Airlines Colombia, NIT: 890.704.196-6, Aerovías de Integración Regional S.A - Aires S.A. Av. El Dorado No.103-08 Entrada 1 - Hangar, customer_service@sac.latam.com, 601 - 5185800
+        </p>
+    </footer>
+
+    <script>
+        // Datos de duraciones reales de vuelos en Colombia (en minutos)
+        const distancias = {
+            'BOG': { 'MDE': 90, 'CLO': 70, 'CTG': 80, 'SMR': 80, 'BAQ': 85, 'CUC': 110, 'PEI': 95, 'BGA': 35, 'MZL': 110, 'ARM': 120, 'IBE': 100, 'PAS': 120, 'LET': 150 },
+            'MDE': { 'BOG': 90, 'CLO': 55, 'CTG': 40, 'SMR': 50, 'BAQ': 35, 'CUC': 85, 'PEI': 55, 'BGA': 75, 'MZL': 65, 'ARM': 45, 'IBE': 75, 'PAS': 105, 'LET': 135 },
+            'CLO': { 'BOG': 70, 'MDE': 55, 'CTG': 50, 'SMR': 60, 'BAQ': 45, 'CUC': 105, 'PEI': 80, 'BGA': 65, 'MZL': 90, 'ARM': 60, 'IBE': 55, 'PAS': 85, 'LET': 150 },
+            'CTG': { 'BOG': 80, 'MDE': 40, 'CLO': 50, 'SMR': 20, 'BAQ': 25, 'CUC': 130, 'PEI': 95, 'BGA': 80, 'MZL': 115, 'ARM': 75, 'IBE': 100, 'PAS': 130, 'LET': 165 },
+            'SMR': { 'BOG': 80, 'MDE': 50, 'CLO': 60, 'CTG': 20, 'BAQ': 30, 'CUC': 135, 'PEI': 100, 'BGA': 85, 'MZL': 120, 'ARM': 80, 'IBE': 105, 'PAS': 135, 'LET': 170 },
+            'BAQ': { 'BOG': 85, 'MDE': 35, 'CLO': 45, 'CTG': 25, 'SMR': 30, 'CUC': 115, 'PEI': 80, 'BGA': 80, 'MZL': 100, 'ARM': 55, 'IBE': 90, 'PAS': 125, 'LET': 155 },
+            'CUC': { 'BOG': 110, 'MDE': 85, 'CLO': 105, 'CTG': 130, 'SMR': 135, 'BAQ': 115, 'PEI': 155, 'BGA': 110, 'MZL': 135, 'ARM': 110, 'IBE': 125, 'PAS': 160, 'LET': 195 },
+            'PEI': { 'BOG': 95, 'MDE': 55, 'CLO': 80, 'CTG': 95, 'SMR': 100, 'BAQ': 80, 'CUC': 155, 'BGA': 75, 'MZL': 30, 'ARM': 40, 'IBE': 80, 'PAS': 125, 'LET': 155 },
+            'BGA': { 'BOG': 35, 'MDE': 75, 'CLO': 65, 'CTG': 80, 'SMR': 85, 'BAQ': 80, 'CUC': 110, 'PEI': 75, 'MZL': 85, 'ARM': 70, 'IBE': 70, 'PAS': 115, 'LET': 145 },
+            'MZL': { 'BOG': 110, 'MDE': 65, 'CLO': 90, 'CTG': 115, 'SMR': 120, 'BAQ': 100, 'CUC': 135, 'PEI': 30, 'BGA': 85, 'ARM': 40, 'IBE': 110, 'PAS': 150, 'LET': 180 },
+            'ARM': { 'BOG': 120, 'MDE': 45, 'CLO': 60, 'CTG': 75, 'SMR': 80, 'BAQ': 55, 'CUC': 110, 'PEI': 40, 'BGA': 70, 'MZL': 40, 'IBE': 90, 'PAS': 130, 'LET': 160 },
+            'IBE': { 'BOG': 100, 'MDE': 75, 'CLO': 55, 'CTG': 100, 'SMR': 105, 'BAQ': 90, 'CUC': 125, 'PEI': 80, 'BGA': 70, 'MZL': 110, 'ARM': 90, 'PAS': 115, 'LET': 150 },
+            'PAS': { 'BOG': 120, 'MDE': 105, 'CLO': 85, 'CTG': 130, 'SMR': 135, 'BAQ': 125, 'CUC': 160, 'PEI': 125, 'BGA': 115, 'MZL': 150, 'ARM': 130, 'IBE': 115, 'LET': 180 },
+            'LET': { 'BOG': 150, 'MDE': 135, 'CLO': 150, 'CTG': 165, 'SMR': 170, 'BAQ': 155, 'CUC': 195, 'PEI': 155, 'BGA': 145, 'MZL': 180, 'ARM': 160, 'IBE': 150, 'PAS': 180 }
+        };
+
+        // Cargar datos desde URL
+        function loadQuotationData() {
+            const params = new URLSearchParams(window.location.search);
+            
+            // Datos del viaje
+            const origen = params.get('origen') || 'Bogotá (BOG)';
+            const destino = params.get('destino') || 'Medellín (MDE)';
+            const fechaSalida = params.get('fechaSalida') || '2026-06-14';
+            const pasajeros = parseInt(params.get('pasajeros')) || 1;
+            const ninos = parseInt(params.get('ninos')) || 0;
+
+            // Datos del vuelo de ida
+            const salidaIda = params.get('salidaIda') || '6:40';
+            const llegadaIda = params.get('llegadaIda') || '8:10';
+            const precioIda = parseInt(params.get('precioIda')) || 80000;
+
+            // Datos del vuelo de regreso
+            const salidaRegreso = params.get('salidaRegreso') || '9:55';
+            const llegadaRegreso = params.get('llegadaRegreso') || '11:00';
+            const precioRegreso = parseInt(params.get('precioRegreso')) || 85000;
+
+            // Extraer códigos y nombres
+            const origenNombre = origen.split('(')[0].trim();
+            const origenCodigo = origen.split('(')[1]?.replace(')', '') || 'BOG';
+            const destinoNombre = destino.split('(')[0].trim();
+            const destinoCodigo = destino.split('(')[1]?.replace(')', '') || 'MDE';
+
+            // Actualizar título
+            document.getElementById('tripTitle').textContent = 'Resumen de tu viaje';
+            document.getElementById('tripRoute').textContent = `${origenNombre} > ${destinoNombre}`;
+
+            // Actualizar rutas dinámicamente
+            document.getElementById('outboundRouteDisplay').textContent = `${origenNombre} a ${destinoNombre}`;
+            document.getElementById('returnRouteDisplay').textContent = `${destinoNombre} a ${origenNombre}`;
+
+            // Actualizar vuelo de ida
+            const [horaIda, minutosIda] = salidaIda.split(':');
+            const salidaSufijo = parseInt(horaIda) < 12 ? 'a. m.' : 'p. m.';
+            
+            const [horaLlegada, minutosLlegada] = llegadaIda.split(':');
+            const llegadaSufijo = parseInt(horaLlegada) < 12 ? 'a. m.' : 'p. m.';
+
+            document.getElementById('outboundTime').textContent = salidaIda;
+            document.getElementById('outboundSuffix').textContent = salidaSufijo;
+            document.getElementById('inboundTime').textContent = llegadaIda;
+            document.getElementById('inboundSuffix').textContent = llegadaSufijo;
+            document.getElementById('outboundOrigin').textContent = origenCodigo;
+            document.getElementById('inboundDestination').textContent = destinoCodigo;
+            document.getElementById('outboundDate').textContent = formatDateSpanish(fechaSalida);
+
+            // Calcular duración de ida
+            const duracionIdaMinutos = distancias[origenCodigo]?.[destinoCodigo] || 90;
+            const duracionIdaHoras = Math.floor(duracionIdaMinutos / 60);
+            const duracionIdaMin = duracionIdaMinutos % 60;
+            const texturaDuracionIda = duracionIdaHoras > 0 ? `${duracionIdaHoras} h ${duracionIdaMin} min` : `${duracionIdaMin} min`;
+            document.getElementById('outboundFlightType').textContent = texturaDuracionIda;
+
+            // Actualizar vuelo de regreso
+            const [horaRegresoIda, minutosRegresoIda] = salidaRegreso.split(':');
+            const regresoSufijo = parseInt(horaRegresoIda) < 12 ? 'a. m.' : 'p. m.';
+            
+            const [horaRegresoLlegada, minutosRegresoLlegada] = llegadaRegreso.split(':');
+            const regresoLlegadaSufijo = parseInt(horaRegresoLlegada) < 12 ? 'a. m.' : 'p. m.';
+
+            document.getElementById('returnOutboundTime').textContent = salidaRegreso;
+            document.getElementById('returnOutboundSuffix').textContent = regresoSufijo;
+            document.getElementById('returnInboundTime').textContent = llegadaRegreso;
+            document.getElementById('returnInboundSuffix').textContent = regresoLlegadaSufijo;
+            document.getElementById('returnOutboundOrigin').textContent = destinoCodigo;
+            document.getElementById('returnInboundDestination').textContent = origenCodigo;
+
+            // Calcular duración de regreso
+            const duracionRegresoMinutos = distancias[destinoCodigo]?.[origenCodigo] || 90;
+            const duracionRegresoHoras = Math.floor(duracionRegresoMinutos / 60);
+            const duracionRegresoMin = duracionRegresoMinutos % 60;
+            const texturaDuracionRegreso = duracionRegresoHoras > 0 ? `${duracionRegresoHoras} h ${duracionRegresoMin} min` : `${duracionRegresoMin} min`;
+            document.getElementById('returnFlightType').textContent = texturaDuracionRegreso;
+
+            // Calcular precios
+            const precioBase = precioIda + precioRegreso;
+            const descuento = Math.round(precioBase * 0.35);
+            const precioConDescuento = precioBase - descuento;
+            const impuestos = Math.round(precioConDescuento * 0.28);
+            const subtotal = precioConDescuento + impuestos;
+
+            // Actualizar precios
+            document.getElementById('flightPrice').textContent = `COP ${(precioBase * pasajeros).toLocaleString('es-CO')}`;
+            document.getElementById('taxesPrice').textContent = `COP ${(impuestos * pasajeros).toLocaleString('es-CO')}`;
+            document.getElementById('discountAmount').textContent = (descuento * pasajeros).toLocaleString('es-CO');
+            document.getElementById('subtotal').textContent = `COP ${(subtotal * pasajeros).toLocaleString('es-CO')}`;
+        }
+
+        // Formatear fecha en español
+        function formatDateSpanish(dateStr) {
+            const options = { weekday: 'short', month: 'short', day: 'numeric' };
+            const date = new Date(dateStr + 'T00:00:00');
+            return date.toLocaleDateString('es-ES', options).replace(/\./g, '');
+        }
+
+        // Continuar a pago
+        function continueToPayment() {
+            const params = new URLSearchParams(window.location.search);
+            
+            // Pasar todos los datos a pago.html
+            const paymentParams = new URLSearchParams({
+                origen: params.get('origen'),
+                destino: params.get('destino'),
+                fechaSalida: params.get('fechaSalida'),
+                pasajeros: params.get('pasajeros'),
+                ninos: params.get('ninos'),
+                salidaIda: params.get('salidaIda'),
+                llegadaIda: params.get('llegadaIda'),
+                precioIda: params.get('precioIda'),
+                salidaRegreso: params.get('salidaRegreso'),
+                llegadaRegreso: params.get('llegadaRegreso'),
+                precioRegreso: params.get('precioRegreso'),
+                precioTotal: params.get('precioTotal')
+            });
+
+            window.location.href = `pago.html?${paymentParams.toString()}`;
+        }
+
+        // Cargar datos al abrir
+        window.addEventListener('load', loadQuotationData);
+    </script>
+</body>
+</html>

