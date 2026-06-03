@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -994,6 +995,7 @@
             const destino = document.getElementById('destinoSelect').value;
             const fechaSalida = document.getElementById('fechaSalidaInput').value;
             const fechaRegreso = document.getElementById('fechaRegresoInput').value;
+            const totalPasajeros = passengersCount + childrenCount; // Sumar adultos + niños
 
             if (!origen || origen === 'Selecciona un origen' || !destino || destino === 'Selecciona un destino' || !fechaSalida) {
                 alert('Por favor completa todos los campos');
@@ -1006,7 +1008,8 @@
                 destino: destino,
                 fechaSalida: fechaSalida,
                 fechaRegreso: fechaRegreso || '',
-                pasajeros: passengersCount,
+                pasajeros: totalPasajeros,
+                adultos: passengersCount,
                 ninos: childrenCount
             });
 
